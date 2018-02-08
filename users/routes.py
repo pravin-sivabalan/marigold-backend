@@ -15,4 +15,10 @@ def logut(user):
 def create(user):
     pass
 
+@blueprint.route('/delete/<user>', methods = ['POST'])
+def delete(user):
+    pass
 
+@blueprint.route('/change-password/<user>', methods = ['POST'])
+def delete(user):
+    pass
