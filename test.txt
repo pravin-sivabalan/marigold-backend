@@ -1,2 +1,0 @@
-Testing auto deploy
-Now with ssh key
