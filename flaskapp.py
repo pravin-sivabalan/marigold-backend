@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request
 import subprocess
+
+import users.routes
+
 app = Flask(__name__)
+
+app.register_blueprint(users.routes.blueprint, url_prefix='/users')
 
 @app.route('/')
 @app.route('/<name>')
