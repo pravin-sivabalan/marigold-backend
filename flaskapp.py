@@ -5,7 +5,7 @@ import users.routes
 
 app = Flask(__name__)
 
-app.register_blueprint(users.routes.blueprint, url_prefix='/users')
+app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 
 @app.route('/')
 @app.route('/<name>')
