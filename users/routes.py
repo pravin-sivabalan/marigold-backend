@@ -21,8 +21,9 @@ def login(user):
     return auth.token.create(user_id)
     
 @blueprint.route('/logout/<user>', methods = ['GET'])
-def logut(user):
-    pass
+@auth.required
+def logout(user):
+    return "Hello there: {}".format(auth.user())
 
 @blueprint.route('/create/<user>', methods = ['POST'])
 def create(user):
