@@ -21,4 +21,4 @@ def create(user_id):
 
 def user(token):
     payload = jwt.decode(token, secret, algorithms=algo)
-    return payload["sub"]
+    return int(payload["sub"])
