@@ -36,10 +36,6 @@ def connectiokn_test():
 def db_init(*args, **kwargs):
     db.util.init(*args, **kwargs)
 
-@app.cli.command("init-db")
-def db_init(*args, **kwargs):
-    db.util.init(*args, **kwargs)
-
 @app.cli.command("add-user")
 @click.option("--first", default="FIRST")
 @click.option("--last", default="LAST")
