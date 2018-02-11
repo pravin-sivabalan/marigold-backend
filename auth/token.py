@@ -7,9 +7,9 @@ import jwt
 import auth
 
 secret = auth.config["jwt"]["secret"]
-algo = "HS256"
+algo = auth.config["jwt"]["algo"]
 
-token_lifetime = 5
+token_lifetime = int(auth.config["jwt"]["lifetime"])
 def create(user_id):
     payload = {
         "sub": user_id,
