@@ -2,6 +2,7 @@
 from flask import request, Blueprint
 
 import auth
+import auth.token
 import users.db
 
 import json
@@ -17,7 +18,7 @@ def login(user):
     except users.db.CredError as err:
         return err.message
 
-    return "NO"
+    return auth.token.create(user_id)
     
 @blueprint.route('/logout/<user>', methods = ['GET'])
 def logut(user):
