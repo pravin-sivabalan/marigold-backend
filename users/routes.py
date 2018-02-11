@@ -20,5 +20,5 @@ def delete(user):
     pass
 
 @blueprint.route('/change-password/<user>', methods = ['POST'])
-def delete(user):
+def change_password(user):
     pass
