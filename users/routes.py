@@ -31,7 +31,7 @@ def create(user):
 @blueprint.route('/delete', methods = ['POST'])
 @auth.required
 def delete():
-    delete_user(auth.user())
+    users.db.delete_user(auth.user())
 
 @blueprint.route('/change-password', methods = ['POST'])
 def change_password():
