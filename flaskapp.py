@@ -13,7 +13,6 @@ parser = configparser.ConfigParser()
 parser.sections()
 parser.read('../database.ini')
 
-
 @app.route('/')
 @app.route('/<name>')
 def hello_world(name=None):
