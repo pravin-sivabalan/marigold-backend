@@ -1,11 +1,13 @@
 
 import MySQLdb as sql
+import hashlib
 
 import db
+import auth
 
-TABLES = {}
+tables = {}
 
-TABLES["users"] = """
+tables["users"] = """
     CREATE TABLE users (
         id int(11) NOT NULL AUTO_INCREMENT,
         first_name varchar(256) NOT NULL,
@@ -25,7 +27,7 @@ def init():
     conn = db.conn()
     cursor = conn.cursor()
 
-    for name, cmd in TABLES.items():
+    for name, cmd in tables.items():
         drop_cmd = "DROP TABLE IF EXISTS {};".format(name)
 
         try:
@@ -41,7 +43,7 @@ def add_user(first, last, email, passwd):
     cmd = """
         INSERT INTO users (first_name, last_name, email, password)
         VALUES ('{}', '{}', '{}', '{}');
-    """.format(first, last, email, passwd)
+    """.format(first, last, email, auth.calc_hash(passwd))
 
     try:
         cursor.execute(cmd)

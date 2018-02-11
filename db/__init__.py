@@ -3,11 +3,11 @@ from flask import g
 import MySQLdb as sql
 
 import db.util
-import db.config
+import config_reader as conf
+
+config = conf.read("../database.ini")
 
 def make_conn():
-    config  = db.config.read()
-
     db_table = config["database"]
     return sql.connect(
             host = db_table["host"],

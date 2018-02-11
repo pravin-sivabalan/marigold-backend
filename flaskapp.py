@@ -5,8 +5,8 @@ import subprocess
 
 import users.routes
 
+import db
 import db.util
-import db.config
 
 app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
