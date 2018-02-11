@@ -13,10 +13,10 @@ def make_conn():
             host = db_table["host"],
             user = db_table["user"],
             passwd = db_table["pass"],
-            db = "marigold")
+            db = db_table["name"])
 
 def conn():
     if not hasattr(g, 'db_conn'):
-        g.db_conn = db.util.make_conn()
+        g.db_conn = make_conn()
 
     return g.db_conn

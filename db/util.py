@@ -8,4 +8,5 @@ def init():
     Creates tables
     """
     conn = db.conn()
-    print(conn)
+
+    print(conn) 
