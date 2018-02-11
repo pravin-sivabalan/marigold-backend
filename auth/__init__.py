@@ -17,9 +17,8 @@ def required(fn):
     """
     Wrapper for flask endpoints
     Requires the user provides valid jwt in query string
-
-    Probably change to read from json body instead
     """
+
     @wraps(fn)
     def decorated(*args, **kwargs):
         token = request.args.get('jwt')
