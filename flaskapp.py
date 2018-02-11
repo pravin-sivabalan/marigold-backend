@@ -27,7 +27,7 @@ def connectiokn_test():
         
         return output
 
-@app.cli.command("db-init")
+@app.cli.command("init-db")
 def db_init():
     db.util.init()
 
