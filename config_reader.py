@@ -1,7 +1,9 @@
 
 import configparser
+import os
 
-base_path = "../{}.ini"
+config_path_var = "MARIGOLD_CONFIG_PATH"
+base_path = os.environ.get(config_path_var, "../{}.ini")
 
 def read(path):
     path = base_path.format(path)
