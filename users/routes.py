@@ -1,11 +1,23 @@
 
-from flask import Blueprint
+from flask import request, Blueprint
+
+import auth
+import users.db
+
+import json
 
 blueprint = Blueprint('users', __name__)
 
 @blueprint.route('/login/<user>', methods = ['GET'])
 def login(user):
-    return "YOU KNOW WHAT TIME IT IS? RIGHT?"
+    passwd = request.args.get('passwd')
+
+    try:
+        user_id = users.db.check_creds(user, passwd)
+    except users.db.CredError as err:
+        return err.message
+
+    return "NO"
     
 @blueprint.route('/logout/<user>', methods = ['GET'])
 def logut(user):
