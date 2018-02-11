@@ -76,8 +76,6 @@ delete_user_with_id = """
 """
 
 def delete_user(uid):
-    print(type(uid))
-
     conn = db.conn()
     cursor = conn.cursor()
 
