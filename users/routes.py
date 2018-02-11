@@ -14,7 +14,7 @@ def login(user):
 
     try:
         user_id = users.db.check_creds(user, passwd)
-    except db.Error as err:
+    except users.db.CredError as err:
         return err.message
 
     return auth.token.create(user_id)
