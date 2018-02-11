@@ -5,7 +5,7 @@ import MySQLdb as sql
 import db.util
 import config_reader as conf
 
-config = conf.read("../database.ini")
+config = conf.read("database")
 
 def make_conn():
     db_table = config["database"]
