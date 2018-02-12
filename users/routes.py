@@ -3,9 +3,8 @@ from flask import request, Blueprint
 
 import auth
 import auth.token
-import users.db
 
-import json
+import users.db
 
 blueprint = Blueprint('users', __name__)
 
@@ -13,26 +12,24 @@ blueprint = Blueprint('users', __name__)
 def login(user):
     passwd = request.args.get('passwd')
 
-    try:
-        user_id = users.db.check_creds(user, passwd)
-    except users.db.CredError as err:
-        return err.message
-
+    user_id = users.db.check_creds(user, passwd)
     return auth.token.create(user_id)
     
-@blueprint.route('/logout/<user>', methods = ['GET'])
+@blueprint.route('/logout', methods = ['GET'])
 @auth.required
-def logout(user):
+def logout():
     return "Hello there: {}".format(auth.user())
 
 @blueprint.route('/create/<user>', methods = ['POST'])
 def create(user):
     pass
 
-@blueprint.route('/delete/<user>', methods = ['POST'])
-def delete(user):
-    pass
+@blueprint.route('/delete', methods = ['POST'])
+@auth.required
+def delete():
+    users.db.delete_user(auth.uid())
+    return "Goodbye!"
 
-@blueprint.route('/change-password/<user>', methods = ['POST'])
-def change_password(user):
+@blueprint.route('/change-password', methods = ['POST'])
+def change_password():
     pass

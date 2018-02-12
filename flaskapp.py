@@ -11,6 +11,10 @@ import db.util
 app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 
+@app.errorhandler(db.Error)
+def handle_db_error(error):
+    return error.message
+
 @app.route('/')
 @app.route('/<name>')
 def hello_world(name=None):

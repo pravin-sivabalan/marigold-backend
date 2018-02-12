@@ -3,15 +3,21 @@ from flask import g, request
 from functools import wraps
 
 import hashlib
+
 import jwt
+import jwt.exceptions
 
 import config_reader as conf
 config = conf.read("auth")
 
 import auth.token
+import users.db
+
+def uid():
+    return g.user_id
 
 def user():
-    return g.user_id
+    return users.db.find_user(uid())
 
 def required(fn):
     """
@@ -25,7 +31,7 @@ def required(fn):
 
         try:
             g.user_id = auth.token.user(token)
-        except jwt.InvalidTokenErr as err:
+        except jwt.InvalidTokenError as err:
             return str(err)
 
         return fn(*args, **kwargs)

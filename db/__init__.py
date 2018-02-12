@@ -7,6 +7,10 @@ import config_reader as conf
 
 config = conf.read("database")
 
+class Error(Exception):
+    def __init__(self, message):
+        self.message = message
+
 def make_conn():
     db_table = config["database"]
     return sql.connect(
