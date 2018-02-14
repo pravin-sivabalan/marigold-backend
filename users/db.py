@@ -56,6 +56,8 @@ class InvalidUid(Error):
     """
     The given user id was not found in the database
     """
+    status_code = 500
+    error_code = 4
 
 find_user_with_id = """
     SELECT * from USERS

@@ -8,9 +8,10 @@ import users.db
 
 blueprint = Blueprint('users', __name__)
 
-@blueprint.route('/login/<user>', methods = ['GET'])
+@blueprint.route('/login/<user>', methods = ['POST'])
 def login(user):
-    passwd = request.args.get('passwd')
+    data = request.get_json()
+    passwd = data.get('passwd')
 
     user_id = users.db.check_creds(user, passwd)
     return jsonify({
