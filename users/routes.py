@@ -1,5 +1,5 @@
 
-from flask import request, Blueprint
+from flask import request, jsonify, Blueprint
 
 import auth
 import auth.token
@@ -13,7 +13,9 @@ def login(user):
     passwd = request.args.get('passwd')
 
     user_id = users.db.check_creds(user, passwd)
-    return auth.token.create(user_id)
+    return jsonify({
+        "jwt": auth.token.create(user_id).decode("utf-8")
+    })
     
 @blueprint.route('/logout', methods = ['GET'])
 @auth.required
