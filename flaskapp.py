@@ -8,29 +8,14 @@ import users.routes
 import db
 import db.util
 
+from error import Error, response_for_error
+
 app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 
-@app.errorhandler(db.Error)
-def handle_db_error(error):
-    return error.message
-
-@app.route('/')
-@app.route('/<name>')
-def hello_world(name=None):
-	return render_template('hello.html', name=name)
-
-@app.route('/update/git', methods = ['GET', 'POST'])
-def update():
-	cmd = ["./hook.sh", ]
-	return "hi"
-
-@app.route('/database/connectiontest')
-def connectiokn_test():
-        config = db.config.read()
-        output = "User: " + config['database']['user'] + "<br>Host: " + config['database']['host'] 
-        
-        return output
+@app.errorhandler(Error)
+def handle_error(error):
+    return response_for_error(error)
 
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY
