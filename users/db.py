@@ -13,7 +13,7 @@ passwd_field = 4
 class UserNotFound(Error):
     """Could not find user"""
     status_code = 400
-    error_code = 0
+    error_code = 1
 
 class CredError(Error):
     pass
@@ -21,12 +21,12 @@ class CredError(Error):
 class InvalidPassword(CredError):
     """Password does not match database"""
     status_code = 400
-    error_code = 1
+    error_code = 2
 
 class NoPasswordGiven(CredError):
     """No password was given"""
     status_code = 400
-    error_code = 2
+    error_code = 3
 
 find_users_with_email = """
     SELECT * FROM users
@@ -59,7 +59,7 @@ class InvalidUid(Error):
 
 find_user_with_id = """
     SELECT * from USERS
-    WHERE id = %d
+    WHERE id = %s
 """
 
 def find_user(uid):
