@@ -5,6 +5,7 @@ from datetime import datetime
 import jwt
 
 import auth
+from error import Error
 
 secret = auth.config["jwt"]["secret"]
 algo = auth.config["jwt"]["algo"]
@@ -19,6 +20,21 @@ def create(user_id):
 
     return jwt.encode(payload, secret, algorithm=algo)
 
+class JWTError(Error):
+    """
+    Invalid JWT provided 
+    """
+    status_code = 401
+    error_code = 0
+
+    def __init__(self, jwt_err):
+        self.jwt_error_name = type(jwt_err).__name__
+
+
 def user(token):
-    payload = jwt.decode(token, secret, algorithms=algo)
+    try:
+        payload = jwt.decode(token, secret, algorithms=algo)
+    except jwt.InvalidTokenError as err:
+        raise JWTError(err)
+
     return int(payload["sub"])

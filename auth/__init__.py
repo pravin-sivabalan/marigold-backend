@@ -17,20 +17,20 @@ def uid():
     return g.user_id
 
 def user():
-    return users.db.find_user(uid())
+    return g.user
 
 def required(fn):
     """
     Wrapper for flask endpoints
     Requires the user provides valid jwt in query string
     """
-
     @wraps(fn)
     def decorated(*args, **kwargs):
-        token = request.args.get('jwt')
+        token = request.headers.get('Authorization')
 
         try:
             g.user_id = auth.token.user(token)
+            g.user = users.db.find_user(g.user_id)
         except jwt.InvalidTokenError as err:
             return str(err)
 
