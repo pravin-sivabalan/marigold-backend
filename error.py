@@ -9,7 +9,7 @@ class Error(Exception):
         as_dict["message"] = self.__doc__
         as_dict["name"] = type(self).__name__
 
-        return json.dumps(as_dict)
+        return as_dict
 
 def response_for_error(error):
     response = jsonify(error.to_dict())
