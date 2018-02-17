@@ -17,6 +17,24 @@ app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 def handle_error(error):
     return response_for_error(error)
 
+# Test routes
+@app.route('/')
+@app.route('/<name>')
+def hello_world(name=None):
+	return render_template('hello.html', name=name)
+
+@app.route('/update/git', methods = ['GET', 'POST'])
+def update():
+	cmd = ["./hook.sh", ]
+	return "hi"
+
+@app.route('/database/connectiontest')
+def connectiokn_test():
+        config = db.config.read()
+        output = "User: " + config['database']['user'] + "<br>Host: " + config['database']['host'] 
+        
+        return output
+
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY
 # Use like so on terminal: `flask $CMD_NAME_HERE $ARG1 $ARG2 ... $ARGN
