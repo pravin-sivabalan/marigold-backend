@@ -30,7 +30,6 @@ class JWTError(Error):
     def __init__(self, jwt_err):
         self.jwt_error_name = type(jwt_err).__name__
 
-
 def user(token):
     try:
         payload = jwt.decode(token, secret, algorithms=algo)
