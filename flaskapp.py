@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,send_file
 import click
 
 import subprocess
@@ -8,6 +8,10 @@ import meds.routes
 
 import db
 import db.util
+
+
+import boto3
+from botocore.exceptions import ClientError
 
 from error import Error, response_for_error
 
@@ -36,6 +40,13 @@ def connectiokn_test():
         output = "User: " + config['database']['user'] + "<br>Host: " + config['database']['host'] 
         
         return output
+
+
+@app.route('/email_image')
+def get_image():
+       filename = 'MariGoldLogo.png'
+
+       return send_file(filename, mimetype='image/gif')
 
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY
