@@ -32,7 +32,7 @@ def create(user):
 @auth.required
 def delete():
     users.db.delete_user(auth.uid())
-    return "Goodbye!"
+    return jsonify(message="ok")
 
 @blueprint.route('/change-password', methods = ['POST'])
 def change_password():
