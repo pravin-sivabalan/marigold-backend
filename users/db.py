@@ -52,6 +52,59 @@ def check_creds(user, passwd):
 
     return user[id_field]
 
+class UserExists(Error):
+    """User already exists"""
+    status_code = 409
+    error_code = 23
+
+class InvalidInput(Error):
+    """Request did include correct fields"""
+    status_code = 409
+    error_code = 24
+
+    def __init__(self, fields):
+        self.bad_fields = fields
+
+create_user_cmd = """
+    INSERT INTO users (first_name, last_name, email, password)
+    VALUES (%s, %s, %s, %s);
+"""
+
+def create_user(first, last, email, passwd):
+    # add validation
+    invalidFields = []
+    if first is None:
+        invalidFields.append("first_name")
+    if last is None:
+        invalidFields.append("last_name")
+    if email is None:
+        invalidFields.append("email")
+    if passwd is None:
+        invalidFields.append("password")
+
+    if len(invalidFields) != 0:
+        raise InvalidInput(invalidFields)
+
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+
+    found = cursor.execute(find_users_with_email, [email])
+    if found != 0:
+        raise UserExists()
+
+    hashed_passwd = auth.calc_hash(passwd)
+    found = cursor.execute(create_user_cmd, [first, last, email, hashed_passwd])
+    if found == 0:
+        raise InvalidData()
+
+
+    print("found: " + str(found))
+
+    id_field = cursor.lastrowid
+    conn.commit()
+    return id_field
+
+
 class InvalidUid(Error):
     """
     The given user id was not found in the database
@@ -85,4 +138,3 @@ def delete_user(uid):
 
     cursor.execute(delete_user_with_id, [uid])
     conn.commit()
-
