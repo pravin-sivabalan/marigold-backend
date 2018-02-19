@@ -11,11 +11,6 @@ name_field = 1
 dose_field = 2
 expir_date = 3
 
-add_cmd = """
-    INSERT INTO meds (name, dose, expir_date, uid)
-    VALUES (%s, %s, %s, %s);
-"""
-
 class InvalidDose(Error):
     """Dose is not a parsable integer"""
     status_code = 400
@@ -25,6 +20,11 @@ class InvalidDate(Error):
     """Dose is not a parsable integer"""
     status_code = 400
     error_code = 31
+
+add_cmd = """
+    INSERT INTO meds (name, dose, expir_date, uid)
+    VALUES (%s, %s, %s, %s);
+"""
 
 def add(name, dose, expir_date):
     conn = db.conn()
@@ -43,6 +43,7 @@ def add(name, dose, expir_date):
     cursor.execute(add_cmd, [name, dose_parsed, expir_parsed, auth.uid()])
     conn.commit()
 
+
 for_user_cmd = """
     SELECT id, name, dose, expir_date FROM meds
     WHERE uid = %s
@@ -56,3 +57,24 @@ def for_user():
     users_meds = cursor.fetchall()
    
     return users_meds
+
+
+class MedIdNotFound(Error):
+    """Given medicine ID was not in the database"""
+    status_code = 400
+    error_code = 32
+
+delete_cmd = """
+   DELETE FROM meds
+   WHERE id = %s
+"""
+
+def delete(med_id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    count = cursor.execute(delete_cmd, [med_id])
+    if count == 0:
+        raise MedIdNotFound()
+
+    conn.commit()
