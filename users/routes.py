@@ -14,9 +14,10 @@ def login(user):
     passwd = data.get('passwd')
 
     user_id = users.db.check_creds(user, passwd)
-    return jsonify({
-        "jwt": auth.token.create(user_id).decode("utf-8")
-    })
+    return jsonify(
+        message="ok",
+        jwt=auth.token.create(user_id).decode("utf-8")
+    )
     
 @blueprint.route('/logout', methods = ['GET'])
 @auth.required
