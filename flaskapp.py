@@ -42,11 +42,7 @@ def connectiokn_test():
         return output
 
 
-@app.route('/email_image')
-def get_image():
-       filename = 'MariGoldLogo.png'
 
-       return send_file(filename, mimetype='image/gif')
 
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY
