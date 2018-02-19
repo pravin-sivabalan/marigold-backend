@@ -52,6 +52,56 @@ def check_creds(user, passwd):
 
     return user[id_field]
 
+class UserExists(Error):
+    """User already exists"""
+    status_code = 409
+    error_code = 1
+
+class InvalidInput(Error):
+    """OK"""
+    def __init__(self, fields):
+        self.bad_fields = fields
+
+create_user_cmd = """
+    INSERT INTO users (first_name, last_name, email, password)
+    VALUES ('%s', '%s', '%s', '%s');
+"""
+
+def create_user(first, last, email, passwd):
+    # add validation
+    invalidFields = []
+    if first is None:
+        invalidFields.append("First")
+    if last is None:
+        invalidFields.append("Last")
+    if email is None:
+        invalidFields.append("Email")
+    if passwd is None:
+        invalidFields.append("Password")
+
+    if len(invalidFields != 0):
+        raise InvalidInput(invalidFields)
+
+
+    found = cursor.execute()
+    if found != 0:
+        raise UserExists()
+
+    found = cursor.execute(create_user_cmd, [first, last, email, password])
+    if found == 0:
+        raise UserNotFound()
+
+    try:
+        cursor.execute(cmd)
+    except sql.Error as err:
+        print(err)
+
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    conn.commit()
+
+
 class InvalidUid(Error):
     """
     The given user id was not found in the database
@@ -85,4 +135,3 @@ def delete_user(uid):
 
     cursor.execute(delete_user_with_id, [uid])
     conn.commit()
-

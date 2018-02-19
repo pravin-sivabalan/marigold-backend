@@ -17,7 +17,14 @@ def login(user):
     return jsonify({
         "jwt": auth.token.create(user_id).decode("utf-8")
     })
+
+@blueprint.route('/register', methods = ['POST'])
+def register():
+    data = request.get_json()
     
+    email = data.get('email')
+
+
 @blueprint.route('/logout', methods = ['GET'])
 @auth.required
 def logout():
