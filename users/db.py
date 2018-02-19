@@ -90,11 +90,9 @@ def create_user(first, last, email, passwd):
         raise UserExists()
 
     found = cursor.execute(create_user_cmd, [first, last, email, passwd])
-    if found == 0:
-        raise UserNotFound()
-
-    user = cursor.fetchall()[0]
-    return user[id_field]
+    id_field = cursor.lastrowid
+    print(id_field)
+    return id_field
 
 
 class InvalidUid(Error):
