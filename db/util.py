@@ -25,15 +25,9 @@ tables["meds"] = """
     CREATE TABLE meds (
         id int(11) NOT NULL AUTO_INCREMENT,
 
-        adverse_reaction int(11),
-        app_number int(11),
-
-        boxed_warning mediumtext,
-
-        brand_name mediumtext,
-        generic_name mediumtext,
-
-        
+        name mediumtext,
+        dose int(11),
+        expir_date date,
        
         PRIMARY KEY(id)
     );

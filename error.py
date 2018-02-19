@@ -11,6 +11,14 @@ class Error(Exception):
 
         return as_dict
 
+class MissingDataError(Error):
+    """A field in the request body is missing"""
+    status_code = 400
+    error_code = 10
+
+    def __init__(self, err):
+        self.key = err.args[0]
+
 def response_for_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
