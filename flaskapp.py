@@ -4,6 +4,7 @@ import click
 import subprocess
 
 import users.routes
+import meds.routes
 
 import db
 import db.util
@@ -12,6 +13,7 @@ from error import Error, response_for_error
 
 app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
+app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 
 @app.errorhandler(Error)
 def handle_error(error):
