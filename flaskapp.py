@@ -4,6 +4,7 @@ import click
 import subprocess
 
 import users.routes
+import meds.routes
 
 import db
 import db.util
@@ -12,10 +13,29 @@ from error import Error, response_for_error
 
 app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
+app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 
 @app.errorhandler(Error)
 def handle_error(error):
     return response_for_error(error)
+
+# Test routes
+@app.route('/')
+@app.route('/<name>')
+def hello_world(name=None):
+	return render_template('hello.html', name=name)
+
+@app.route('/update/git', methods = ['GET', 'POST'])
+def update():
+	cmd = ["./hook.sh", ]
+	return "hi"
+
+@app.route('/database/connectiontest')
+def connectiokn_test():
+        config = db.config.read()
+        output = "User: " + config['database']['user'] + "<br>Host: " + config['database']['host'] 
+        
+        return output
 
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY

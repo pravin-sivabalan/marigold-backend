@@ -10,12 +10,27 @@ tables = {}
 tables["users"] = """
     CREATE TABLE users (
         id int(11) NOT NULL AUTO_INCREMENT,
+
         first_name varchar(256) NOT NULL,
         last_name varchar(256) NOT NULL,
 
         email varchar(256) NOT NULL,
         password varchar(256) NOT NULL,
 
+        PRIMARY KEY(id)
+    );
+"""
+
+tables["meds"] = """
+    CREATE TABLE meds (
+        id int(11) NOT NULL AUTO_INCREMENT,
+
+        name mediumtext NOT NULL,
+        dose int(11) NOT NULL,
+        expir_date date NOT NULL,
+
+        uid int(11) NOT NULL,
+       
         PRIMARY KEY(id)
     );
 """
@@ -51,3 +66,4 @@ def add_user(first, last, email, passwd):
         print(err)
 
     conn.commit()
+    
