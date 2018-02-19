@@ -26,6 +26,5 @@ def add():
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
 def for_user():
-    uid = auth.uid()
-
-    
+    users_meds = meds.db.for_user()
+    return jsonify(message="ok", meds=users_meds)

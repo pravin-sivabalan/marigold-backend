@@ -12,8 +12,8 @@ dose_field = 2
 expir_date = 3
 
 add_cmd = """
-    INSERT INTO meds (name, dose, expir_date)
-    VALUES (%s, %s, %s);
+    INSERT INTO meds (name, dose, expir_date, uid)
+    VALUES (%s, %s, %s, %s);
 """
 
 class InvalidDose(Error):
@@ -40,5 +40,19 @@ def add(name, dose, expir_date):
     except:
         raise InvalidDate()
 
-    cursor.execute(add_cmd, [name, dose_parsed, expir_parsed])
+    cursor.execute(add_cmd, [name, dose_parsed, expir_parsed, auth.uid()])
     conn.commit()
+
+for_user_cmd = """
+    SELECT id, name, dose, expir_date FROM meds
+    WHERE uid = %s
+"""
+
+def for_user():
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+    
+    cursor.execute(for_user_cmd, [auth.uid()])
+    users_meds = cursor.fetchall()
+   
+    return users_meds

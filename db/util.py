@@ -25,9 +25,11 @@ tables["meds"] = """
     CREATE TABLE meds (
         id int(11) NOT NULL AUTO_INCREMENT,
 
-        name mediumtext,
-        dose int(11),
-        expir_date date,
+        name mediumtext NOT NULL,
+        dose int(11) NOT NULL,
+        expir_date date NOT NULL,
+
+        uid int(11) NOT NULL,
        
         PRIMARY KEY(id)
     );
@@ -64,3 +66,4 @@ def add_user(first, last, email, passwd):
         print(err)
 
     conn.commit()
+    
