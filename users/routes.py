@@ -24,9 +24,9 @@ def register():
     first_name = data.get('first_name')
     last_name = data.get('last_name')
     email = data.get('email')
-    passwd = data.get('passwd')
+    password = data.get('password')
 
-    user_id = users.db.create_user(first_name, last_name, email, passwd)
+    user_id = users.db.create_user(first_name, last_name, email, password)
     return jsonify({
         "jwt": auth.token.create(user_id).decode("utf-8")
     })

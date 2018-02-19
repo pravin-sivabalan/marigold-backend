@@ -55,10 +55,13 @@ def check_creds(user, passwd):
 class UserExists(Error):
     """User already exists"""
     status_code = 409
-    error_code = 1
+    error_code = 23
 
 class InvalidInput(Error):
-    """OK"""
+    """Request did include correct fields"""
+    status_code = 409
+    error_code = 24
+
     def __init__(self, fields):
         self.bad_fields = fields
 
@@ -71,13 +74,13 @@ def create_user(first, last, email, passwd):
     # add validation
     invalidFields = []
     if first is None:
-        invalidFields.append("First")
+        invalidFields.append("first_name")
     if last is None:
-        invalidFields.append("Last")
+        invalidFields.append("last_name")
     if email is None:
-        invalidFields.append("Email")
+        invalidFields.append("email")
     if passwd is None:
-        invalidFields.append("Password")
+        invalidFields.append("password")
 
     if len(invalidFields) != 0:
         raise InvalidInput(invalidFields)
@@ -89,9 +92,16 @@ def create_user(first, last, email, passwd):
     if found != 0:
         raise UserExists()
 
-    found = cursor.execute(create_user_cmd, [first, last, email, passwd])
+    hashed_passwd = auth.calc_hash(passwd)
+    found = cursor.execute(create_user_cmd, [first, last, email, hashed_passwd])
+    if found == 0:
+        raise InvalidData()
+
+
+    print("found: " + str(found))
+
     id_field = cursor.lastrowid
-    print(id_field)
+    conn.commit()
     return id_field
 
 
