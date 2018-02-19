@@ -44,20 +44,22 @@ def change_password(email):
     RECIPIENT = email;
     AWS_REGION = "us-east-1";
 
-    SUBJECT = "Amazon SES Test (SDK for Python)"
+    SUBJECT = "MariGold Password Reset"
 
     BODY_TEXT = ("Amazon SES Test (Python)\r\n"
              "This email was sent with Amazon SES using the "
              "AWS SDK for Python (Boto)."
             )
 
-    test = "Hello world"
+    test = "Hello world";
+    address = "google.com";
 
 
-    BODY_HTML = """<html><head></head><body><h1>Amazon SES Test (SDK for Python) """ + test + """</h1><p>This email was sent with
-    <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
-    <a href='https://aws.amazon.com/sdk-for-python/'>
-        AWS SDK for Python (Boto)</a>.</p>
+    BODY_HTML = """<html><head><img src="https://www.apple.com/favicon.ico"></head>
+
+    <body><h2 style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>You have requested to reset your password for MariGold.</h2>
+
+        <p style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Please click <a href='""" + address + """'>here</a> or go to """ + address + """ to reset your password.</p>
     </body>
     </html>"""
 

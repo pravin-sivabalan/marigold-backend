@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,send_file
 import click
 
 import subprocess
@@ -42,72 +42,11 @@ def connectiokn_test():
         return output
 
 
+@app.route('/email_image')
+def get_image():
+       filename = 'MariGoldLogo.png'
 
-@app.route('/database/emailtest/<email>')
-def email_test(email):
-
-    SENDER = "Marigold <mailer@marigoldapp.net>"
-    RECIPIENT = email;
-    AWS_REGION = "us-east-1";
-
-    SUBJECT = "Amazon SES Test (SDK for Python)"
-
-    BODY_TEXT = ("Amazon SES Test (Python)\r\n"
-             "This email was sent with Amazon SES using the "
-             "AWS SDK for Python (Boto)."
-            )
-
-    test = "Hello world"
-
-
-    BODY_HTML = """<html><head></head><body><h1>Amazon SES Test (SDK for Python) """ + test + """</h1><p>This email was sent with
-    <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
-    <a href='https://aws.amazon.com/sdk-for-python/'>
-        AWS SDK for Python (Boto)</a>.</p>
-    </body>
-    </html>"""
-
-
-    CHARSET = "UTF-8"
-
-    client = boto3.client('ses',region_name=AWS_REGION)
-
-    try:
-        response = client.send_email(
-        Destination={
-            'ToAddresses': [
-                RECIPIENT,
-            ],
-        },
-        Message={
-            'Body': {
-                'Html': {
-                    'Charset': CHARSET,
-                    'Data': BODY_HTML,
-                },
-                'Text': {
-                    'Charset': CHARSET,
-                    'Data': BODY_TEXT,
-                },
-            },
-            'Subject': {
-                'Charset': CHARSET,
-                'Data': SUBJECT,
-            },
-        },
-        Source=SENDER,
-    )
-
-
-
-    except ClientError as e:
-        return e.response['Error']['Message'];
-    else:
-        return email;
-
-
-
-
+       return send_file(filename, mimetype='image/gif')
 
 # Command Line Utils
 # NOT ACCESSIBLE BY WEB, DONT WORRY
