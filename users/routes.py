@@ -21,9 +21,15 @@ def login(user):
 @blueprint.route('/register', methods = ['POST'])
 def register():
     data = request.get_json()
-    
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
     email = data.get('email')
+    passwd = data.get('passwd')
 
+    user_id = users.db.create_user(first_name, last_name, email, passwd)
+    return jsonify({
+        "jwt": auth.token.create(user_id).decode("utf-8")
+    })
 
 @blueprint.route('/logout', methods = ['GET'])
 @auth.required

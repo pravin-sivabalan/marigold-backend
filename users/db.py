@@ -64,7 +64,7 @@ class InvalidInput(Error):
 
 create_user_cmd = """
     INSERT INTO users (first_name, last_name, email, password)
-    VALUES ('%s', '%s', '%s', '%s');
+    VALUES (%s, %s, %s, %s);
 """
 
 def create_user(first, last, email, passwd):
@@ -79,27 +79,22 @@ def create_user(first, last, email, passwd):
     if passwd is None:
         invalidFields.append("Password")
 
-    if len(invalidFields != 0):
+    if len(invalidFields) != 0:
         raise InvalidInput(invalidFields)
 
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
 
-    found = cursor.execute()
+    found = cursor.execute(find_users_with_email, [email])
     if found != 0:
         raise UserExists()
 
-    found = cursor.execute(create_user_cmd, [first, last, email, password])
+    found = cursor.execute(create_user_cmd, [first, last, email, passwd])
     if found == 0:
         raise UserNotFound()
 
-    try:
-        cursor.execute(cmd)
-    except sql.Error as err:
-        print(err)
-
-    conn = db.conn()
-    cursor = conn.cursor()
-
-    conn.commit()
+    user = cursor.fetchall()[0]
+    return user[id_field]
 
 
 class InvalidUid(Error):
