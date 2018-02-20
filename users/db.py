@@ -112,16 +112,6 @@ class InvalidUid(Error):
     status_code = 500
     error_code = 23
 
-
-class InvalidEmail(Error):
-    """
-    The given user email was not found in the database
-    """
-    status_code = 500
-    error_code = 99
-
-
-
 find_user_with_id = """
     SELECT * from USERS
     WHERE id = %s
@@ -148,20 +138,3 @@ def delete_user(uid):
 
     cursor.execute(delete_user_with_id, [uid])
     conn.commit()
-
-
-
-find_user_with_email = """
-    SELECT * from users
-    WHERE email = %s
-"""
-
-def find_user_email(email):
-    conn = db.conn()
-    cursor = conn.cursor()
-
-    count = cursor.execute(find_user_with_email, [email])
-    if count == 0:
-        raise InvalidEmail()
-
-    return cursor.fetchall()[0]
