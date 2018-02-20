@@ -14,6 +14,7 @@ blueprint = Blueprint('users', __name__)
 @blueprint.route('/login/<user>', methods = ['POST'])
 def login(user):
     data = request.get_json()
+    user = data.get('email')
     passwd = data.get('password')
 
     user_id = users.db.check_creds(user, passwd)
