@@ -1,3 +1,4 @@
+import users.db
 import boto3
 from botocore.exceptions import ClientError
 
@@ -25,6 +26,9 @@ def change_password(email):
         <p style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Please click <a href='""" + address + """'>here</a> or go to """ + address + """ to reset your password.</p>
     </body>
     </html>"""
+
+
+    users.db.find_user_email(email)
 
 
     CHARSET = "UTF-8"
@@ -60,6 +64,6 @@ def change_password(email):
     except ClientError as e:
         return e.response['Error']['Message'];
     else:
-        return "Success! Email sent to " + email;
+        return "Success! Email sent to " + email + "\n" ;
 
 
