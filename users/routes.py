@@ -11,8 +11,8 @@ from botocore.exceptions import ClientError
 
 blueprint = Blueprint('users', __name__)
 
-@blueprint.route('/login/<user>', methods = ['POST'])
-def login(user):
+@blueprint.route('/login/', methods = ['POST'])
+def login():
     data = request.get_json()
     user = data.get('email')
     passwd = data.get('password')
