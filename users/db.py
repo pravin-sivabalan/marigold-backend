@@ -138,3 +138,97 @@ def delete_user(uid):
 
     cursor.execute(delete_user_with_id, [uid])
     conn.commit()
+
+
+
+def find_user_email(email):
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+    id_field = cursor.lastrowid
+    conn.commit()
+
+    count = cursor.execute(find_users_with_email, [email])
+    if count == 0:
+        raise UserNotFound()
+
+
+    return cursor.fetchall()[0]["id"]
+
+
+insert_link_string = """
+    INSERT INTO reset_password (link, email, user_id)
+    VALUES (%s, %s, %s);
+"""
+
+
+def insert_link(link, email, user_id):
+    
+    # add validation
+    invalidFields = []
+    if link is None:
+        invalidFields.append("link")
+    if email is None:
+        invalidFields.append("email")
+    if user_id is None:
+        invalidFields.append("user_id")
+
+
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+
+    print("TYPES BABY")
+    print(type(link))
+    print(type(email))
+    print(type(user_id))
+
+    found = cursor.execute(insert_link_string, [link, email, user_id])
+    if found == 0:
+        raise InvalidData()
+
+    conn.commit()
+
+    return "Success"
+
+
+find_users_with_link= """
+    SELECT * FROM reset_password
+    WHERE link = %s
+"""
+
+def find_user_by_link(link):
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+    id_field = cursor.lastrowid
+    conn.commit()
+
+    count = cursor.execute(find_users_with_link, [link])
+    if count == 0:
+        raise UserNotFound()
+
+
+    return cursor.fetchall()[0]["user_id"]
+
+update_password_sql = """
+    UPDATE marigold.users SET password=%s WHERE id= %s
+"""
+
+def update_password(id, password):
+
+
+    print(id)
+    print(password)
+
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+    
+
+    count = cursor.execute(update_password_sql, [password, id])
+    conn.commit()
+
+
+    if count == 0:
+        raise UserNotFound()
+
+    return 
+
+    
