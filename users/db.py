@@ -113,7 +113,7 @@ class InvalidUid(Error):
     error_code = 23
 
 find_user_with_id = """
-    SELECT * from USERS
+    SELECT * FROM users
     WHERE id = %s
 """
 
