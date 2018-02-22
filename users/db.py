@@ -117,15 +117,21 @@ find_user_with_id = """
     WHERE id = %s
 """
 
-def find_user(uid):
+def find_user(uid, custom_query=find_user_with_id):
     conn = db.conn()
-    cursor = conn.cursor()
+    cursor = conn.cursor(db.DictCursor)
 
-    count = cursor.execute(find_user_with_id, [uid])
+    count = cursor.execute(custom_query, [uid])
     if count == 0:
         raise InvalidUid()
 
     return cursor.fetchall()[0]
+
+def user_profile(uid):
+    return find_user(uid, """
+        SELECT first_name, last_name, email FROM users
+        WHERE id = %s
+    """)
 
 delete_user_with_id = """
     DELETE FROM users

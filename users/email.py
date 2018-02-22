@@ -1,3 +1,5 @@
+from flask import request, jsonify, Blueprint, render_template, request
+
 import users.db
 
 import boto3
@@ -71,10 +73,9 @@ def change_password(email):
     except ClientError as e:
         return e.response['Error']['Message'];
     else:
-
         print(random_string + " " + email + " " + str(user_id))
         users.db.insert_link(random_string, email, user_id)
-        return "Success! Email sent to " + email + "<br>Link:" + random_string + "<br>User ID:" + str(user_id);
+        return jsonify(message="ok")
 
 
 
