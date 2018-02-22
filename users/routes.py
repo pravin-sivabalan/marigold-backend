@@ -62,5 +62,5 @@ def user_change_password():
       link = request.form['link']  
       password = auth.calc_hash(request.form['password'])
       em.update_password(link, password)
-      return password + "<br>" + link
+      return "Thank you for reseting your password"
 
