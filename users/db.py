@@ -70,7 +70,12 @@ create_user_cmd = """
     VALUES (%s, %s, %s, %s);
 """
 
-def create_user(first, last, email, passwd):
+create_user_cmd_leagues = """
+    INSERT INTO users (first_name, last_name, email, password, leagues)
+    VALUES (%s, %s, %s, %s, %s);
+"""
+
+def create_user(first, last, email, passwd, leagues):
     # add validation
     invalidFields = []
     if first is None:
@@ -92,18 +97,17 @@ def create_user(first, last, email, passwd):
     if found != 0:
         raise UserExists()
 
-    hashed_passwd = auth.calc_hash(passwd)
-    found = cursor.execute(create_user_cmd, [first, last, email, hashed_passwd])
+    hashed_password = auth.calc_hash(passwd)
+    if leagues is None:
+        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password])
+    else:
+        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password, leagues])
     if found == 0:
         raise InvalidData()
-
-
-    print("found: " + str(found))
 
     id_field = cursor.lastrowid
     conn.commit()
     return id_field
-
 
 class InvalidUid(Error):
     """
@@ -162,7 +166,7 @@ insert_link_string = """
 
 
 def insert_link(link, email, user_id):
-    
+
     # add validation
     invalidFields = []
     if link is None:
@@ -220,7 +224,7 @@ def update_password(id, password):
 
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
-    
+
 
     count = cursor.execute(update_password_sql, [password, id])
     conn.commit()
@@ -229,6 +233,4 @@ def update_password(id, password):
     if count == 0:
         raise UserNotFound()
 
-    return 
-
-    
+    return
