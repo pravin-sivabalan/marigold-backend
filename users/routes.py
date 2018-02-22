@@ -12,6 +12,14 @@ from botocore.exceptions import ClientError
 
 blueprint = Blueprint('users', __name__)
 
+@blueprint.route('', methods = ['GET'])
+@auth.required
+def profile():
+    return jsonify(
+        message="ok",
+        profile=users.db.user_profile(auth.uid())
+    )
+
 @blueprint.route('/login', methods = ['POST'])
 def login():
     data = request.get_json()
@@ -32,9 +40,9 @@ def register():
     last_name = data.get('last_name')
     email = data.get('email')
     password = data.get('password')
-    leagues = data.get('leagues')
+    league = data.get('league')
 
-    user_id = users.db.create_user(first_name, last_name, email, password, leagues)
+    user_id = users.db.create_user(first_name, last_name, email, password, league)
     return jsonify(
         message="ok",
         jwt=auth.token.create(user_id).decode("utf-8")

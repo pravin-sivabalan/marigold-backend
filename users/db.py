@@ -71,11 +71,11 @@ create_user_cmd = """
 """
 
 create_user_cmd_leagues = """
-    INSERT INTO users (first_name, last_name, email, password, leagues)
+    INSERT INTO users (first_name, last_name, email, password, league)
     VALUES (%s, %s, %s, %s, %s);
 """
 
-def create_user(first, last, email, passwd, leagues):
+def create_user(first, last, email, passwd, league):
     # add validation
     invalidFields = []
     if first is None:
@@ -98,10 +98,11 @@ def create_user(first, last, email, passwd, leagues):
         raise UserExists()
 
     hashed_password = auth.calc_hash(passwd)
-    if leagues is None:
+    if league is None:
+        print("hello")
         found = cursor.execute(create_user_cmd, [first, last, email, hashed_password])
     else:
-        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password, leagues])
+        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, leagu])
     if found == 0:
         raise InvalidData()
 
@@ -121,15 +122,21 @@ find_user_with_id = """
     WHERE id = %s
 """
 
-def find_user(uid):
+def find_user(uid, custom_query=find_user_with_id):
     conn = db.conn()
-    cursor = conn.cursor()
+    cursor = conn.cursor(db.DictCursor)
 
-    count = cursor.execute(find_user_with_id, [uid])
+    count = cursor.execute(custom_query, [uid])
     if count == 0:
         raise InvalidUid()
 
     return cursor.fetchall()[0]
+
+def user_profile(uid):
+    return find_user(uid, """
+        SELECT first_name, last_name, email, league FROM users
+        WHERE id = %s
+    """)
 
 delete_user_with_id = """
     DELETE FROM users
@@ -179,11 +186,6 @@ def insert_link(link, email, user_id):
 
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
-
-    print("TYPES BABY")
-    print(type(link))
-    print(type(email))
-    print(type(user_id))
 
     found = cursor.execute(insert_link_string, [link, email, user_id])
     if found == 0:

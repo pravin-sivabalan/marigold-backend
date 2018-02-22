@@ -17,6 +17,8 @@ tables["users"] = """
         email varchar(256) NOT NULL,
         password varchar(256) NOT NULL,
 
+        league varchar(256),
+
         PRIMARY KEY(id)
     );
 """
