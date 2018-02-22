@@ -40,8 +40,9 @@ def register():
     last_name = data.get('last_name')
     email = data.get('email')
     password = data.get('password')
+    league = data.get('league')
 
-    user_id = users.db.create_user(first_name, last_name, email, password)
+    user_id = users.db.create_user(first_name, last_name, email, password, league)
     return jsonify(
         message="ok",
         jwt=auth.token.create(user_id).decode("utf-8")
@@ -67,8 +68,7 @@ def pdate_password_user(link):
 def user_change_password():
 
     if request.method == 'POST':
-      link = request.form['link']  
+      link = request.form['link']
       password = auth.calc_hash(request.form['password'])
       em.update_password(link, password)
       return "Thank you for reseting your password"
-

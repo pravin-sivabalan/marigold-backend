@@ -70,7 +70,12 @@ create_user_cmd = """
     VALUES (%s, %s, %s, %s);
 """
 
-def create_user(first, last, email, passwd):
+create_user_cmd_leagues = """
+    INSERT INTO users (first_name, last_name, email, password, league)
+    VALUES (%s, %s, %s, %s, %s);
+"""
+
+def create_user(first, last, email, passwd, league):
     # add validation
     invalidFields = []
     if first is None:
@@ -92,18 +97,18 @@ def create_user(first, last, email, passwd):
     if found != 0:
         raise UserExists()
 
-    hashed_passwd = auth.calc_hash(passwd)
-    found = cursor.execute(create_user_cmd, [first, last, email, hashed_passwd])
+    hashed_password = auth.calc_hash(passwd)
+    if league is None:
+        print("hello")
+        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password])
+    else:
+        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, leagu])
     if found == 0:
         raise InvalidData()
-
-
-    print("found: " + str(found))
 
     id_field = cursor.lastrowid
     conn.commit()
     return id_field
-
 
 class InvalidUid(Error):
     """
@@ -129,7 +134,7 @@ def find_user(uid, custom_query=find_user_with_id):
 
 def user_profile(uid):
     return find_user(uid, """
-        SELECT first_name, last_name, email FROM users
+        SELECT first_name, last_name, email, league FROM users
         WHERE id = %s
     """)
 
@@ -168,7 +173,7 @@ insert_link_string = """
 
 
 def insert_link(link, email, user_id):
-    
+
     # add validation
     invalidFields = []
     if link is None:
@@ -181,11 +186,6 @@ def insert_link(link, email, user_id):
 
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
-
-    print("TYPES BABY")
-    print(type(link))
-    print(type(email))
-    print(type(user_id))
 
     found = cursor.execute(insert_link_string, [link, email, user_id])
     if found == 0:
@@ -226,7 +226,7 @@ def update_password(id, password):
 
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
-    
+
 
     count = cursor.execute(update_password_sql, [password, id])
     conn.commit()
@@ -235,6 +235,4 @@ def update_password(id, password):
     if count == 0:
         raise UserNotFound()
 
-    return 
-
-    
+    return
