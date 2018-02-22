@@ -99,10 +99,9 @@ def create_user(first, last, email, passwd, league):
 
     hashed_password = auth.calc_hash(passwd)
     if league is None:
-        print("hello")
         found = cursor.execute(create_user_cmd, [first, last, email, hashed_password])
     else:
-        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, leagu])
+        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, league])
     if found == 0:
         raise InvalidData()
 
