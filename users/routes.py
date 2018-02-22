@@ -12,6 +12,14 @@ from botocore.exceptions import ClientError
 
 blueprint = Blueprint('users', __name__)
 
+@blueprint.route('', methods = ['GET'])
+@auth.required
+def profile():
+    return jsonify(
+        message="ok",
+        profile=users.db.user_profile(auth.uid())
+    )
+
 @blueprint.route('/login', methods = ['POST'])
 def login():
     data = request.get_json()
