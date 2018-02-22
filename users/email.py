@@ -30,9 +30,7 @@ def change_password(email):
 
 
     BODY_HTML = """<html><head><img height="100" src="https://s3.amazonaws.com/marigoldapp/MariGoldLogo.png"></head>
-
     <body><h2 style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>You have requested to reset your password for MariGold.</h2>
-
         <p style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Please click <a href='""" + address + """'>here</a> or go to """ + address + """ to reset your password.</p>
     </body>
     </html>"""
@@ -75,9 +73,7 @@ def change_password(email):
     else:
 
         print(random_string + " " + email + " " + str(user_id))
-
         users.db.insert_link(random_string, email, user_id)
-
         return "Success! Email sent to " + email + "<br>Link:" + random_string + "<br>User ID:" + str(user_id);
 
 
