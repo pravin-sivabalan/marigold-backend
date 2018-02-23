@@ -38,21 +38,27 @@ class BaseTestCase(ut.TestCase):
     def auth_get(self, route):
         return self.app.get(route, headers=self.make_auth_headers())
 
-    def auth_post(self, route, data):
+    def auth_post(self, route, data=None):
         return self.post(route, data=data, headers=self.make_auth_headers())
 
-    def login(self, email, password):
+    def login(self, email, password, validate=True):
         rv = self.post('/user/login', dict(
             email=email,
             password=password
         ))
 
-        self.assertEqual(rv.status_code, 200)
+        if validate:
+            self.assertEqual(rv.status_code, 200)
 
         data = json.loads(rv.data)
-        self.assertEqual(data["message"], "ok")
 
-        self.jwt = data["jwt"]
+        if validate:
+            self.assertEqual(data["message"], "ok")
+
+        if "jwt" in data:
+            self.jwt = data["jwt"]
+
+        return rv
 
     def fake_user(self):
         rv = self.post('/user/register', dict(
