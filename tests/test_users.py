@@ -56,6 +56,27 @@ class UserTestCase(BaseTestCase):
 
         self.assertEqual(profile["email"], "abc@abc.com")
 
+    def test_leagues(self):
+        rv = self.post('/user/register', dict(
+            first_name="Sports",
+            last_name="Man",
+            email="abc@abc.com",
+            password="123",
+            league="NFL, NBA"
+        ))
+        self.assertEqual(rv.status_code, 200)
+
+        self.login(email="abc@abc.com", password="123")
+
+        rv = self.auth_get('/user')
+        self.assertEqual(rv.status_code, 200)
+
+        data = json.loads(rv.data)
+        profile = data["profile"]
+
+        self.assertEqual(profile["league"], "NFL, NBA")
+        
+
     def test_user_delete(self):
         self.test_register()
         self.login(email="abc@abc.com", password="123")
@@ -68,3 +89,5 @@ class UserTestCase(BaseTestCase):
 
         data = json.loads(rv.data)
         self.assertEqual(data["name"], "UserNotFound")
+    
+        
