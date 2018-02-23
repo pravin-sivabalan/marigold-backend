@@ -38,8 +38,8 @@ class BaseTestCase(ut.TestCase):
     def auth_get(self, route):
         return self.app.get(route, headers=self.make_auth_headers())
 
-    def auth_post(self, route):
-        return self.post(route, headers=self.make_auth_headers())
+    def auth_post(self, route, data):
+        return self.post(route, data=data, headers=self.make_auth_headers())
 
     def login(self, email, password):
         rv = self.post('/user/login', dict(
@@ -67,5 +67,6 @@ class BaseTestCase(ut.TestCase):
 
         self.jwt = data["jwt"]
         return rv
+
 if __name__ == "__main__":
     ut.main()
