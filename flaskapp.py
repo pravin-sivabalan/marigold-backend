@@ -23,11 +23,10 @@ app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 def handle_error(error):
     return response_for_error(error)
 
-# Test routes
+# Home Directory
 @app.route('/')
-@app.route('/<name>')
-def hello_world(name=None):
-	return render_template('hello.html', name=name)
+def hello_world():
+	return render_template('index.html')
 
 @app.route('/update/git', methods = ['GET', 'POST'])
 def update():
