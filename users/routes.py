@@ -72,3 +72,8 @@ def user_change_password():
       password = auth.calc_hash(request.form['password'])
       em.update_password(link, password)
       return "Thank you for reseting your password"
+
+
+@blueprint.route('/delete-user/<email>')
+def delete_user(email):
+    return em.delete_account_email(email)
