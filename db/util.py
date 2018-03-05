@@ -8,7 +8,7 @@ import auth
 tables = {}
 
 tables["users"] = """
-    CREATE TABLE users (
+    CREATE TABLE {} (
         id int(11) NOT NULL AUTO_INCREMENT,
 
         first_name varchar(256) NOT NULL,
@@ -23,9 +23,26 @@ tables["users"] = """
     );
 """
 
+tables["user_meds"] = """
+    CREATE TABLE {} (
+        id int NOT NULL AUTO_INCREMENT,
+
+        name mediumtext NOT NULL,
+        dose int NOT NULL,
+        quantity int NOT NULL,
+
+        run_out_date date NOT NULL, 
+
+        uid int NOT NULL,
+        mid int,
+       
+        PRIMARY KEY(id)
+    );
+"""
+
 tables["meds"] = """
-    CREATE TABLE meds (
-        id int(11) NOT NULL AUTO_INCREMENT,
+    CREATE TABLE {} (
+        id int NOT NULL AUTO_INCREMENT,
 
         name mediumtext NOT NULL,
         dose int(11) NOT NULL,
@@ -49,7 +66,7 @@ def init():
 
         try:
             cursor.execute(drop_cmd)
-            cursor.execute(cmd)
+            cursor.execute(cmd.format(name))
         except sql.Error as err:
             print(err)
 

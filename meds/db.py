@@ -1,5 +1,5 @@
 
-from datetime import datetime
+import datetime as dt
 
 import db
 import auth
@@ -21,12 +21,22 @@ class InvalidDate(Error):
     status_code = 400
     error_code = 31
 
+class InvalidQuantity(Error):
+    """Quantity is not a parsable integer"""
+    status_code = 400
+    error_code = 311
+
+class InvalidPerWeek(Error):
+    """Quantity is not a parsable integer"""
+    status_code = 400
+    error_code = 312
+
 add_cmd = """
-    INSERT INTO meds (name, dose, expir_date, uid)
-    VALUES (%s, %s, %s, %s);
+    INSERT INTO user_meds (name, dose, quantity, run_out_date, uid)
+    VALUES (%s, %s, %s, %s, %s);
 """
 
-def add(name, dose, expir_date):
+def add(name, dose, quantity, per_week):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -36,16 +46,24 @@ def add(name, dose, expir_date):
         raise InvalidDose()
 
     try:
-        expir_parsed = datetime.strptime(expir_date, '%m %d %Y')
+        quantity_parsed = int(quantity)
     except:
-        raise InvalidDate()
+        raise InvalidQuantity()
 
-    cursor.execute(add_cmd, [name, dose_parsed, expir_parsed, auth.uid()])
+    try:
+        per_week_parsed = int(per_week)
+    except:
+        raise InvalidPerWeek()
+
+    weeks = int(quantity_parsed / (dose_parsed * per_week_parsed))
+    run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
+
+    cursor.execute(add_cmd, [name, dose_parsed, quantity_parsed, run_out_date, auth.uid()])
     conn.commit()
 
 
 for_user_cmd = """
-    SELECT id, name, dose, expir_date FROM meds
+    SELECT id, mid, name, dose, quantity, run_out_date FROM user_meds
     WHERE uid = %s
 """
 
