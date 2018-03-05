@@ -63,7 +63,7 @@ def add(name, dose, quantity, per_week):
 
 
 for_user_cmd = """
-    SELECT id, mid, name, dose, quantity FROM meds
+    SELECT id, mid, name, dose, quantity, run_out_date FROM user_meds
     WHERE uid = %s
 """
 
