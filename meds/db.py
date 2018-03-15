@@ -32,11 +32,11 @@ class InvalidPerWeek(Error):
     error_code = 312
 
 add_cmd = """
-    INSERT INTO user_meds (name, dose, quantity, run_out_date, uid)
-    VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, name, dose, quantity, run_out_date, temporary)
+    VALUES (%s, %s, %s, %s, %s, %s);
 """
 
-def add(name, dose, quantity, per_week):
+def add(name, dose, quantity, per_week, temporary):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -58,7 +58,7 @@ def add(name, dose, quantity, per_week):
     weeks = int(quantity_parsed / (dose_parsed * per_week_parsed))
     run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
 
-    cursor.execute(add_cmd, [name, dose_parsed, quantity_parsed, run_out_date, auth.uid()])
+    cursor.execute(add_cmd, [auth.uid(), name, dose_parsed, quantity_parsed, run_out_date, temporary])
     conn.commit()
 
 
