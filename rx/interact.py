@@ -5,7 +5,10 @@ Helper methods and classes for working with the NIH's Drug Interaction API
 import rx
 import collections as col
 
-InteractionForCui = col.namedtuple("InteractionForCui", ["name", "cui", "tty", "desc", "severity"])
+InteractionDrugInfo = col.namedtuple("InteractionDrugInfo", ["name", "tty", "cui"])
+InteractionInfo = col.namedtuple("InteractionInfo", ["desc", "severity"])
+
+InteractionForCui = col.namedtuple("InteractionForCui", ["drug", "info"])
 
 def for_cui(cui):
     """
@@ -31,18 +34,20 @@ def for_cui(cui):
 
                 interactions.append(
                     InteractionForCui(
-                        name = other_drug.get("name"),
-                        cui = other_drug.get("rxcui"),
-                        tty = other_drug.get("tty"),
-                        desc = pair.get("description"),
-                        severity = pair.get("severity")
+                        drug = InteractionDrugInfo(
+                            name = other_drug.get("name"),
+                            cui = other_drug.get("rxcui"),
+                            tty = other_drug.get("tty")
+                        ),
+                        info = InteractionInfo(
+                            desc = pair.get("description"),
+                            severity = pair.get("severity")
+                        )
                     )
                 )
     
     return interactions
 
-InteractionDrugInfo = col.namedtuple("InteractionDrugInfo", ["name", "tty", "cui"])
-InteractionInfo = col.namedtuple("InteractionInfo", ["desc", "severity"])
 InteractionInList = col.namedtuple("InteractionInList", ["drug1", "drug2", "info"])
 
 def with_list(cuis):
