@@ -41,15 +41,41 @@ def extract_cui(data):
 
     return ids[0]
 
-Candidate = col.namedtuple('Candidate', ['score', 'cui'])
+Candidate = col.namedtuple('Candidate', ['rank', 'cui'])
 def lookup_approx(term):
-    pass
-
-def terms(cui):
     """
-    Gets associated RxTerms for a given CUI, including name, strength, and more
+    Performs an approximate lookup and optionally returns best result
     """
-    path = "/RxTerms/rxcui.json/{}/allinfo".format(cui)
+    resp = rx.get('/approximateTerm.json', params=dict(term=term))
+    resp.raise_for_status()
 
-    data = rx.get(path)
-    print(data.text)
+    data = resp.json()
+    candidates = data.get('approximateGroup').get('candidate')
+
+    if len(candidates) == 0:
+        return []
+
+    rank_lookup = {}
+    for candidate in candidates:
+        cui = candidate.get('rxcui')
+        
+        if cui not in rank_lookup:
+            rank = int(candidate.get('rank'))
+            rank_lookup[cui] = rank
+
+    cleaned_candidates = [Candidate(rank=rank, cui=cui)
+                          for cui, rank in rank_lookup.items()]
+
+    cleaned_candidates.sort(key=lambda canidate: canidate.rank)
+    return list(map(lambda candidate: candidate.cui, cleaned_candidates))
+
+def props(cui):
+    """
+    Gets associated properties for a CUI, including its type and name
+    """
+    path = "/rxcui/{}/properties.json".format(cui)
+
+    data = rx.get(path, params={})
+    data.raise_for_status()
+
+    return data.json()
