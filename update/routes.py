@@ -2,10 +2,9 @@ from flask import request, jsonify, Blueprint, render_template, request
 
 import auth
 import auth.token
+import update.db
 
-
-import boto3
-from botocore.exceptions import ClientError
+from error import Error, MissingDataError
 
 blueprint = Blueprint('update', __name__)
 
@@ -17,14 +16,27 @@ def profile():
         profile=users.db.user_profile(auth.uid())
     )
 
-@blueprint.route('/med', methods = ['POST'])
-def login():
-    return "Hello World"
+
 
 @blueprint.route('/profile', methods = ['POST'])
 @auth.required
-def test():
-    output = str(auth.uid())
-    return output
+def update_profile():
+    user_id = auth.uid()
+    data = request.get_json()
+
+    if(data.get('first_name')):
+        update.db.update_first(data.get('first_name'), user_id)
+
+    if(data.get('last_name')):
+        update.db.update_last(data.get('last_name'), user_id)
+
+    if(data.get('email')):
+        update.db.update_email(data.get('email'), user_id)
+
+    if(data.get('league')):
+        update.db.update_league(data.get('league'), user_id)
+
+
+    return jsonify(message="ok")
 
 
