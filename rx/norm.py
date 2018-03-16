@@ -41,7 +41,7 @@ def extract_cui(data):
 
     return ids[0]
 
-Candidate = col.namedtuple('Candidate', ['rank', 'cui'])
+Candidate = col.namedtuple('Candidate', ['rank', 'score', 'cui'])
 def lookup_approx(term):
     """
     Performs an approximate lookup and optionally returns best result
@@ -60,14 +60,17 @@ def lookup_approx(term):
         cui = candidate.get('rxcui')
         
         if cui not in rank_lookup:
-            rank = int(candidate.get('rank'))
-            rank_lookup[cui] = rank
+            rank_lookup[cui] = candidate
 
-    cleaned_candidates = [Candidate(rank=rank, cui=cui)
-                          for cui, rank in rank_lookup.items()]
+    cleaned_candidates = []
+    for cui, candidate in rank_lookup.items():
+        rank = int(candidate.get('rank'))
+        score = int(candidate.get('score'))
+
+        cleaned_candidates.append(Candidate(rank=rank, score=score, cui=cui))
 
     cleaned_candidates.sort(key=lambda canidate: canidate.rank)
-    return list(map(lambda candidate: candidate.cui, cleaned_candidates))
+    return cleaned_candidates
 
 def props(cui):
     """
