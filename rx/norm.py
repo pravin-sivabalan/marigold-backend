@@ -81,4 +81,4 @@ def props(cui):
     data = rx.get(path, params={})
     data.raise_for_status()
 
-    return data.json()
+    return data.json().get('properties')
