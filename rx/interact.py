@@ -5,9 +5,12 @@ Helper methods and classes for working with the NIH's Drug Interaction API
 import rx
 import collections as col
 
-Interaction = col.namedtuple("Interaction", ["name", "cui", "tty", "desc", "severity"])
+InteractionForCui = col.namedtuple("InteractionForCui", ["name", "cui", "tty", "desc", "severity"])
 
 def for_cui(cui):
+    """
+    Gets all interactions with a given drug
+    """
     path = "/interaction/interaction.json"
 
     resp = rx.get(path, params=dict(rxcui=cui))
@@ -27,7 +30,7 @@ def for_cui(cui):
                 other_drug = concept[1].get("minConceptItem")
 
                 interactions.append(
-                    Interaction(
+                    InteractionForCui(
                         name = other_drug.get("name"),
                         cui = other_drug.get("rxcui"),
                         tty = other_drug.get("tty"),
@@ -36,4 +39,51 @@ def for_cui(cui):
                     )
                 )
     
+    return interactions
+
+InteractionDrugInfo = col.namedtuple("InteractionDrugInfo", ["name", "tty", "cui"])
+InteractionInList = col.namedtuple("InteractionInList", ["drug1", "drug2", "desc", "severity"])
+
+def with_list(cuis):
+    """
+    Gets all interactions between drugs in the list `cuis`
+    """
+    path = "/interaction/list.json"
+
+    resp = rx.get(path, params=dict(rxcuis=" ".join(cuis)))
+    resp.raise_for_status()
+
+    data = resp.json().get("fullInteractionTypeGroup")
+
+    interactions = []
+    for group in data:
+        types = group.get("fullInteractionType")
+
+        for typ in types:
+            concepts = typ.get("minConcept")
+
+            drug1 = InteractionDrugInfo(
+                name = concepts[0].get("name"),
+                tty = concepts[0].get("tty"),
+                cui = concepts[0].get("rxcui")
+            )
+
+            drug2 = InteractionDrugInfo(
+                name = concepts[1].get("name"),
+                tty = concepts[1].get("tty"),
+                cui = concepts[1].get("rxcui")
+            )
+
+            pairs = typ.get("interactionPair")
+            for pair in pairs:
+                concept = pair.get("interactionConcept")
+                interactions.append(
+                    InteractionInList(
+                        drug1 = drug1,
+                        drug2 = drug2,
+                        desc = pair.get("description"),
+                        severity = pair.get("severity")
+                    )
+                )
+
     return interactions
