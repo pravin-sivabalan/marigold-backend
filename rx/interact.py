@@ -42,7 +42,8 @@ def for_cui(cui):
     return interactions
 
 InteractionDrugInfo = col.namedtuple("InteractionDrugInfo", ["name", "tty", "cui"])
-InteractionInList = col.namedtuple("InteractionInList", ["drug1", "drug2", "desc", "severity"])
+InteractionInfo = col.namedtuple("InteractionInfo", ["desc", "severity"])
+InteractionInList = col.namedtuple("InteractionInList", ["drug1", "drug2", "info"])
 
 def with_list(cuis):
     """
@@ -76,14 +77,23 @@ def with_list(cuis):
 
             pairs = typ.get("interactionPair")
             for pair in pairs:
-                concept = pair.get("interactionConcept")
                 interactions.append(
                     InteractionInList(
                         drug1 = drug1,
                         drug2 = drug2,
-                        desc = pair.get("description"),
-                        severity = pair.get("severity")
+                        info = InteractionInfo(
+                            desc = pair.get("description"),
+                            severity = pair.get("severity")
+                        )
                     )
                 )
 
-    return interactions
+    # Now, merge interactions between the same two drugs into grouped lists
+    merged_interactions = col.defaultdict(list)
+    for inter in interactions:
+        pair = [inter.drug1, inter.drug2]
+        pair.sort(key=lambda drug: drug.cui)
+
+        merged_interactions[tuple(pair)].append(inter.info)
+    
+    return merged_interactions
