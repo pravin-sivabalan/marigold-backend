@@ -36,7 +36,37 @@ def update_profile():
     if(data.get('league')):
         update.db.update_league(data.get('league'), user_id)
 
+    if(data.get('allergies')):
+        update.db.update_allergies(data.get('allergies'), user_id)
+
 
     return jsonify(message="ok")
 
+
+@blueprint.route('/med', methods = ['POST'])
+@auth.required
+def update_med():
+    user_id = auth.uid()
+    data = request.get_json()
+
+    try:
+        med_id = data["med_id"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+
+    if(data.get('name')):
+        update.db.update_med_name(data.get('name'), med_id)
+
+    if(data.get('dose')):
+        update.db.update_med_dose(data.get('dose'), med_id)
+
+    if(data.get('quantity')):
+        update.db.update_med_quantity(data.get('quantity'), med_id)
+
+    if(data.get('temporary')):
+        update.db.update_med_temporary(data.get('temporary'), med_id)
+
+
+    return jsonify(message="ok")
 

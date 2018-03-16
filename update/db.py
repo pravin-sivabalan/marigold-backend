@@ -60,3 +60,67 @@ def update_league(leagues, id):
     cursor.execute(update_leagues_cmd, [leagues, id])
     conn.commit()
 
+
+
+update_allergies_cmd = """
+    UPDATE users SET allergies = %s WHERE id = %s;
+"""
+
+def update_allergies(allergies, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_allergies_cmd, [allergies, id])
+    conn.commit()
+
+
+update_med_name_cmd = """
+    UPDATE user_meds SET name = %s WHERE id = %s;
+"""
+
+def update_med_name(name, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_med_name_cmd, [name, id])
+    conn.commit()
+
+
+update_med_dose_cmd = """
+    UPDATE user_meds SET dose = %s WHERE id = %s;
+"""
+
+def update_med_dose(dose, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_med_dose_cmd, [dose, id])
+    conn.commit()
+
+
+update_med_quantity_cmd = """
+    UPDATE user_meds SET quantity = %s WHERE id = %s;
+"""
+
+def update_med_quantity(quantity, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_med_quantity_cmd, [quantity, id])
+    conn.commit()
+
+
+update_med_temporary_cmd = """
+    UPDATE user_meds SET temporary = %s WHERE id = %s;
+"""
+
+def update_med_temporary(temp, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_med_temporary_cmd, [temp, id])
+    conn.commit()
+
+
+
+
