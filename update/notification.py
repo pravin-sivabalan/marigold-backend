@@ -58,7 +58,8 @@ for row in data :
 	if(day == datetime.datetime.today().weekday() and time_to_take.time() > lower_bound_time.time() and time_to_take.time() < upper_bound_time.time()):
 		output = "Hello "  + user_name + ". It is time to take " + name 
 		print(output)
-		#print(time_to_take.time())
+	else:
+		print(time_print)
 
 
 
