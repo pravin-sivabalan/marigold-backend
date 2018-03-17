@@ -18,7 +18,6 @@ def classes_raw(cui):
     data = resp.json().get('rxclassDrugInfoList').get('rxclassDrugInfo')
     return data
 
-
 Class = col.namedtuple("Class", ["id", "name", "typ", "relation"])
 
 def classes(cui):
