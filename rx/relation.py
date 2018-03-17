@@ -52,11 +52,3 @@ def classes(cui):
             related_by_prod.add(class_)
 
     return related_by_in, related_by_prod
-
-def classes_by_relation(cui):
-    """
-    Returns two dictionaries, one for classes related by ingredient, the second are classes related by products that use the specified cui
-    Organizes classes by their relationship type to the given concept
-
-    For example, all classes that are related by `may_treat` are stored in the `may_treat` key in the dictionary
-    """
