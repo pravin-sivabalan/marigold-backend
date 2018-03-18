@@ -45,9 +45,9 @@ for row in data :
 	time_to_take = row[6]
 	user_name = get_user_name(user_id)
 
-	now_time = datetime.datetime.now() - datetime.timedelta(hours = 4)
-	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 3) - datetime.timedelta(hours = 4)
-	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 3) - datetime.timedelta(hours = 4)
+	now_time = datetime.datetime.now() 
+	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 3) 
+	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 3)
 
 
 
