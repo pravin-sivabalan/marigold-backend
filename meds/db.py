@@ -4,6 +4,8 @@ import datetime as dt
 import db
 import auth
 
+import rx.norm
+
 from error import Error
 
 id_field = 0
@@ -31,9 +33,14 @@ class InvalidPerWeek(Error):
     status_code = 400
     error_code = 312
 
+class UnknownMed(Error):
+    """Specified medication has no equivalent in the NIH database"""
+    status_code = 400
+    error_code = 313
+
 add_cmd = """
-    INSERT INTO user_meds (name, dose, quantity, run_out_date, uid)
-    VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO user_meds (name, dose, quantity, run_out_date, rxcui, uid)
+    VALUES (%s, %s, %s, %s, %s, %s);
 """
 
 def add(name, dose, quantity, per_week):
@@ -58,12 +65,17 @@ def add(name, dose, quantity, per_week):
     weeks = int(quantity_parsed / (dose_parsed * per_week_parsed))
     run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
 
-    cursor.execute(add_cmd, [name, dose_parsed, quantity_parsed, run_out_date, auth.uid()])
+    candidates = rx.norm.lookup_approx(name)
+    if len(candidates) == 0 or candidates[0].score < 75:
+        raise UnknownMed()
+
+    cui = candidates[0].cui 
+
+    cursor.execute(add_cmd, [name, dose_parsed, quantity_parsed, run_out_date, cui, auth.uid()])
     conn.commit()
 
-
 for_user_cmd = """
-    SELECT id, mid, name, dose, quantity, run_out_date FROM user_meds
+    SELECT id, mid, rxcui, name, dose, quantity, run_out_date FROM user_meds
     WHERE uid = %s
 """
 
@@ -75,7 +87,6 @@ def for_user():
     users_meds = cursor.fetchall()
    
     return users_meds
-
 
 class MedIdNotFound(Error):
     """Given medicine ID was not in the database"""

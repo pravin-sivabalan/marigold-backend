@@ -10,6 +10,17 @@ from error import Error
 class MultipleIdsError(Error):
     """Multiple RxCuis exist for a given NDC"""
 
+def extract_cui(data):
+    ids = data.get('idGroup').get('rxnormId')
+
+    if ids == None:
+        return None
+
+    if len(ids) > 1:
+        raise MultipleIdsError()
+
+    return ids[0]
+
 def lookup_name(name):
     """
     Returns the id associated with a drug given its's name
@@ -29,17 +40,6 @@ def lookup_ndc(ndc):
 
     data = resp.json()
     return extract_cui(data)
-
-def extract_cui(data):
-    ids = data.get('idGroup').get('rxnormId')
-
-    if ids == None:
-        return None
-
-    if len(ids) > 1:
-        raise MultipleIdsError()
-
-    return ids[0]
 
 Candidate = col.namedtuple('Candidate', ['rank', 'score', 'cui'])
 def lookup_approx(term):
