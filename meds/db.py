@@ -39,11 +39,11 @@ class UnknownMed(Error):
     error_code = 313
 
 add_cmd = """
-    INSERT INTO user_meds (name, quantity, run_out_date, rxcui, user_id)
-    VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary)
+    VALUES (%s, %s, %s, %s, %s, %s);
 """
 
-def add(name, quantity, per_week):
+def add(name, quantity, per_week, temporary):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -71,12 +71,12 @@ def add(name, quantity, per_week):
 
     cui = candidates[0].cui 
 
-    cursor.execute(add_cmd, [name, dose_parsed, quantity_parsed, run_out_date, cui, auth.uid()])
+    cursor.execute(add_cmd, [name, cui, quantity_parsed, run_out_date, auth.uid()])
     conn.commit()
 
 for_user_cmd = """
-    SELECT id, mid, rxcui, name, dose, quantity, run_out_date FROM user_meds
-    WHERE uid = %s
+    SELECT id, medication_id, name, dose, quantity, run_out_date, temporary FROM user_meds
+    WHERE user_id = %s
 """
 
 def for_user():

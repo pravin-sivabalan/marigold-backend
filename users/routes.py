@@ -1,4 +1,3 @@
-
 from flask import request, jsonify, Blueprint, render_template, request
 
 import auth
