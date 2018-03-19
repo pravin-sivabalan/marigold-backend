@@ -10,7 +10,7 @@ import rx.interact as rxint
 
 meds_with_cui_cmd = """
     SELECT id FROM user_meds
-    WHERE uid = %s AND rxcui = %s
+    WHERE user_id = %s AND rxcui = %s
 """
 
 def find_med_with_cui(cui):

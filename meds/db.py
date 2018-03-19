@@ -39,11 +39,11 @@ class UnknownMed(Error):
     error_code = 313
 
 add_cmd = """
-    INSERT INTO user_meds (name, dose, quantity, run_out_date, rxcui, uid)
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO user_meds (name, quantity, run_out_date, rxcui, user_id)
+    VALUES (%s, %s, %s, %s, %s);
 """
 
-def add(name, dose, quantity, per_week):
+def add(name, quantity, per_week):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -94,7 +94,7 @@ class MedIdNotFound(Error):
     error_code = 32
 
 delete_cmd = """
-   DELETE FROM meds
+   DELETE FROM user_meds
    WHERE id = %s
 """
 

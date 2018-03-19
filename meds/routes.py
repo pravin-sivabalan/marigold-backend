@@ -16,14 +16,13 @@ def add():
         
     try:
         name = data["name"]
-        dose = data["dose"]
         quantity = data["quantity"]
         per_week = data["per_week"]
     except KeyError as err:
         raise MissingDataError(err)
 
-    meds.db.add(name, dose, quantity, per_week)
-    return jsonify(message="ok")
+    meds.db.add(name, quantity, per_week)
+    return jsonify(message="ok", conflicts=meds.conflict.check())
 
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
