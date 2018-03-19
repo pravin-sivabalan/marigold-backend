@@ -13,11 +13,6 @@ name_field = 1
 dose_field = 2
 expir_date = 3
 
-class InvalidDose(Error):
-    """Dose is not a parsable integer"""
-    status_code = 400
-    error_code = 30
-
 class InvalidDate(Error):
     """Dose is not a parsable integer"""
     status_code = 400
