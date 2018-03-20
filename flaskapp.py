@@ -6,6 +6,7 @@ import subprocess
 import users.routes
 import meds.routes
 import update.routes
+import notification.routes
 
 import db
 import db.util
@@ -20,6 +21,7 @@ app = Flask(__name__)
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 app.register_blueprint(update.routes.blueprint, url_prefix='/update')
+app.register_blueprint(notification.routes.blueprint, url_prefix='/notification')
 
 @app.errorhandler(Error)
 def handle_error(error):
