@@ -25,7 +25,9 @@ def find_med_with_cui(cui):
 
 def check():
     user_meds = meds.db.for_user()
-    cuis = [med.get("rxcui") for med in user_meds]
+    cuis = [med.get("rxcui") for med in user_meds if med.get("rxcui") is not None]
+
+    print(cuis)
 
     processed_interactions = []
 

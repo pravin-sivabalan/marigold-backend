@@ -8,10 +8,9 @@ class MedsTestCase(BaseTestCase):
         super().setUp()
         self.fake_user()
 
-    def add_med(self, name, dose, expir_date):
+    def add_med(self, name, expir_date):
         return self.auth_post('/meds/add', dict(
             name=name,
-            dose=dose,
             expir_date=expir_date
         ))
 

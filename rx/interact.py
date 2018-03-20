@@ -60,6 +60,8 @@ def with_list(cuis):
     resp.raise_for_status()
 
     data = resp.json().get("fullInteractionTypeGroup")
+    if data is None:
+        return {}
 
     interactions = []
     for group in data:

@@ -28,6 +28,11 @@ class InvalidPerWeek(Error):
     status_code = 400
     error_code = 312
 
+class InvalidTemporary(Error):
+    """Temporary is not a parsable boolean"""
+    status_code = 400
+    error_code = 313
+
 class UnknownMed(Error):
     """Specified medication has no equivalent in the NIH database"""
     status_code = 400
@@ -43,11 +48,6 @@ def add(name, quantity, per_week, temporary):
     cursor = conn.cursor()
 
     try:
-        dose_parsed = int(dose)
-    except:
-        raise InvalidDose()
-
-    try:
         quantity_parsed = int(quantity)
     except:
         raise InvalidQuantity()
@@ -57,7 +57,12 @@ def add(name, quantity, per_week, temporary):
     except:
         raise InvalidPerWeek()
 
-    weeks = int(quantity_parsed / (dose_parsed * per_week_parsed))
+    try:
+        temporary_parsed = int(bool(temporary))
+    except:
+        raise InvalidTemporary()
+
+    weeks = int(quantity_parsed / per_week_parsed)
     run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
 
     candidates = rx.norm.lookup_approx(name)
@@ -66,11 +71,11 @@ def add(name, quantity, per_week, temporary):
 
     cui = candidates[0].cui 
 
-    cursor.execute(add_cmd, [name, cui, quantity_parsed, run_out_date, auth.uid()])
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
     conn.commit()
 
 for_user_cmd = """
-    SELECT id, medication_id, name, dose, quantity, run_out_date, temporary FROM user_meds
+    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds
     WHERE user_id = %s
 """
 
