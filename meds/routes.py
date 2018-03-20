@@ -5,6 +5,7 @@ import auth
 from error import Error, MissingDataError
 
 import meds.db
+import meds.conflict
 
 blueprint = Blueprint("meds", __name__)
 
@@ -15,21 +16,26 @@ def add():
         
     try:
         name = data["name"]
-        dose = data["dose"]
         quantity = data["quantity"]
         per_week = data["per_week"]
         temporary = data["temporary"]
     except KeyError as err:
         raise MissingDataError(err)
 
-    meds.db.add(name, dose, quantity, per_week, temporary)
-    return jsonify(message="ok")
+    meds.db.add(name, quantity, per_week, temporary)
+    return jsonify(message="ok", conflicts=meds.conflict.check())
 
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
 def for_user():
     users_meds = meds.db.for_user()
     return jsonify(message="ok", meds=users_meds)
+
+@blueprint.route('/conflicts', methods = ['GET'])
+@auth.required
+def conflicts():
+    conflicts = meds.conflict.check()
+    return jsonify(message="ok", conflicts=conflicts)
 
 @blueprint.route('/delete', methods = ['POST'])
 @auth.required

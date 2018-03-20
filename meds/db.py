@@ -4,17 +4,14 @@ import datetime as dt
 import db
 import auth
 
+import rx.norm
+
 from error import Error
 
 id_field = 0
 name_field = 1
 dose_field = 2
 expir_date = 3
-
-class InvalidDose(Error):
-    """Dose is not a parsable integer"""
-    status_code = 400
-    error_code = 30
 
 class InvalidDate(Error):
     """Dose is not a parsable integer"""
@@ -31,19 +28,24 @@ class InvalidPerWeek(Error):
     status_code = 400
     error_code = 312
 
+class InvalidTemporary(Error):
+    """Temporary is not a parsable boolean"""
+    status_code = 400
+    error_code = 313
+
+class UnknownMed(Error):
+    """Specified medication has no equivalent in the NIH database"""
+    status_code = 400
+    error_code = 313
+
 add_cmd = """
-    INSERT INTO user_meds (user_id, name, dose, quantity, run_out_date, temporary)
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary)
     VALUES (%s, %s, %s, %s, %s, %s);
 """
 
-def add(name, dose, quantity, per_week, temporary):
+def add(name, quantity, per_week, temporary):
     conn = db.conn()
     cursor = conn.cursor()
-
-    try:
-        dose_parsed = int(dose)
-    except:
-        raise InvalidDose()
 
     try:
         quantity_parsed = int(quantity)
@@ -55,15 +57,25 @@ def add(name, dose, quantity, per_week, temporary):
     except:
         raise InvalidPerWeek()
 
-    weeks = int(quantity_parsed / (dose_parsed * per_week_parsed))
+    try:
+        temporary_parsed = int(bool(temporary))
+    except:
+        raise InvalidTemporary()
+
+    weeks = int(quantity_parsed / per_week_parsed)
     run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
 
-    cursor.execute(add_cmd, [auth.uid(), name, dose_parsed, quantity_parsed, run_out_date, temporary])
+    candidates = rx.norm.lookup_approx(name)
+    if len(candidates) == 0 or candidates[0].score < 75:
+        raise UnknownMed()
+
+    cui = candidates[0].cui 
+
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
     conn.commit()
 
-
 for_user_cmd = """
-    SELECT id, medication_id, name, dose, quantity, run_out_date, temporary FROM user_meds
+    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds
     WHERE user_id = %s
 """
 
@@ -76,14 +88,13 @@ def for_user():
    
     return users_meds
 
-
 class MedIdNotFound(Error):
     """Given medicine ID was not in the database"""
     status_code = 400
     error_code = 32
 
 delete_cmd = """
-   DELETE FROM meds
+   DELETE FROM user_meds
    WHERE id = %s
 """
 

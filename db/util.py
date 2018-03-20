@@ -35,6 +35,8 @@ tables["user_meds"] = """
 
         uid int NOT NULL,
         mid int,
+
+        rxcui varchar(256),
        
         PRIMARY KEY(id)
     );
