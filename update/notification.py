@@ -2,6 +2,59 @@ import time, datetime
 import MySQLdb as sql
 from MySQLdb.cursors import DictCursor
 
+import boto3
+from botocore.exceptions import ClientError
+
+
+def mail(email,medication_name, user_name):
+    SENDER = "Marigold <mailer@marigoldapp.net>"
+    RECIPIENT = email;
+    AWS_REGION = "us-east-1";
+    SUBJECT = "Medication Reminder"
+    BODY_TEXT = ("MariGold medication reminder\r\n"
+            
+            )
+
+
+    BODY_HTML = """<html><head><img height="100" src="https://s3.amazonaws.com/marigoldapp/MariGoldLogo.png"></head>
+    <body><h2 style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Time to take """ + medication_name + """</h2>
+        <p style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Hello """ + user_name + """, it is time to take """ + medication_name+ """.</p>
+    </body>
+    </html>"""
+    CHARSET = "UTF-8"
+    client = boto3.client('ses',region_name=AWS_REGION)
+    try:
+        response = client.send_email(
+        Destination={
+            'ToAddresses': [
+                RECIPIENT,
+            ],
+        },
+        Message={
+            'Body': {
+                'Html': {
+                    'Charset': CHARSET,
+                    'Data': BODY_HTML,
+                },
+                'Text': {
+                    'Charset': CHARSET,
+                    'Data': BODY_TEXT,
+                },
+            },
+            'Subject': {
+                'Charset': CHARSET,
+                'Data': SUBJECT,
+            },
+        },
+        Source=SENDER,
+    )
+    except ClientError as e:
+        return e.response['Error']['Message'];
+
+
+
+
+
 
 get_name = """ SELECT * FROM marigold.users WHERE id = %s """
 
@@ -58,17 +111,13 @@ for row in data :
 
 
 	now_time = datetime.datetime.now() 
-	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 3) 
-	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 3)
+	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 2.4) 
+	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 2.4)
 
 
 	if(day == datetime.datetime.today().weekday() and time_to_take.time() > lower_bound_time.time() and time_to_take.time() < upper_bound_time.time()):
-		output = "Hello "  + user_name + ". It is time to take " + str(med_name)
-		print(output)
-	else:
-		if(time_to_take):
-			time_print = "Lower: " + str(lower_bound_time.time()) + " Time_to_take: " + str(time_to_take.time())
-			print(time_print)
+		mail(email, med_name, user_name)
+
 
 
 
