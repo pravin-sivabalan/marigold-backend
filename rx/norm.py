@@ -52,7 +52,7 @@ def lookup_approx(term):
     data = resp.json()
     candidates = data.get('approximateGroup').get('candidate')
 
-    if len(candidates) == 0:
+    if candidates is None or len(candidates) == 0:
         return []
 
     rank_lookup = {}
