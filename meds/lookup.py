@@ -3,6 +3,7 @@ import db
 from error import Error
 
 import rx.norm
+import difflib as dl
 
 accepted_routes = ["oral", "chewable", "tablet", "capsule"]
 
@@ -22,10 +23,14 @@ def contains_name(actual_name, drug):
     name = actual_name.lower()
     return name in drug.name.lower() or name in drug.synonym.lower()
 
-def jsonify(match, name_field):
+def jsonify(match, name_field, actual_name):
+    name = getattr(match, name_field)
+    diffs = [diff for diff in dl.ndiff(actual_name, name) if diff[0] != " "]
+
     return dict(
-        name = getattr(match, name_field),
-        cui = match.cui
+        name = name,
+        cui = match.cui,
+        diffs = len(diffs)
     )
 
 def perform(name, limit=None):
@@ -47,12 +52,15 @@ def perform(name, limit=None):
     matches = [drug for drug in drugs 
                 if is_mouth_drug(drug) and contains_name(actual_name, drug)]
 
-    matches.sort(key=lambda drug: drug.name)
+    if tty == "BN":
+        json_matches = [jsonify(match, name_field="synonym", actual_name=actual_name) for match in matches]
+    else:
+        json_matches = [jsonify(match, name_field="name", actual_name=actual_name) for match in matches]
+
+    json_matches.sort(key=lambda drug_json: drug_json.get("name"))
+    json_matches.sort(key=lambda drug_json: drug_json.get("diffs"))
 
     if limit is not None:
-        matches = matches[:limit]
+        json_matches = json_matches[:limit]
 
-    if tty == "BN":
-        return [jsonify(match, name_field="synonym") for match in matches]
-    else:
-        return [jsonify(match, name_field="name") for match in matches]
+    return json_matches
