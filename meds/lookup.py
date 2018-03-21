@@ -28,7 +28,7 @@ def jsonify(match, name_field):
         cui = match.cui
     )
 
-def perform(name, limit=10):
+def perform(name, limit=None):
     candidates = rx.norm.lookup_approx(name)
 
     if len(candidates) == 0 or candidates[0].score < 75:
@@ -48,6 +48,9 @@ def perform(name, limit=10):
                 if is_mouth_drug(drug) and contains_name(actual_name, drug)]
 
     matches.sort(key=lambda drug: drug.name)
+
+    if limit is not None:
+        matches = matches[:limit]
 
     if tty == "BN":
         return [jsonify(match, name_field="synonym") for match in matches]
