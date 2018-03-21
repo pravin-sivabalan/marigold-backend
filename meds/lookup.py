@@ -40,7 +40,6 @@ def perform(name, limit=None):
         raise CouldNotFindBaseIngredient()
 
     cui = candidates[0].cui
-
     props = rx.norm.props(cui)
 
     actual_name = props.get("name")
