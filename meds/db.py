@@ -43,7 +43,7 @@ add_cmd = """
     VALUES (%s, %s, %s, %s, %s, %s);
 """
 
-def add(name, quantity, per_week, temporary):
+def add(name, cui, quantity, per_week, temporary):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -64,12 +64,6 @@ def add(name, quantity, per_week, temporary):
 
     weeks = int(quantity_parsed / per_week_parsed)
     run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
-
-    candidates = rx.norm.lookup_approx(name)
-    if len(candidates) == 0 or candidates[0].score < 75:
-        raise UnknownMed()
-
-    cui = candidates[0].cui 
 
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
     conn.commit()
