@@ -5,11 +5,12 @@ import auth
 from error import Error, MissingDataError
 
 import meds.db
+import meds.lookup
 import meds.conflict
 
 blueprint = Blueprint("meds", __name__)
 
-@blueprint.route('/add', methods = ['POST'])
+@blueprint.route('/lookup', methods = ['POST'])
 @auth.required
 def lookup():
     data = request.get_json()
