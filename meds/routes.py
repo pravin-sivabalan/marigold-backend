@@ -11,6 +11,19 @@ blueprint = Blueprint("meds", __name__)
 
 @blueprint.route('/add', methods = ['POST'])
 @auth.required
+def lookup():
+    data = request.get_json()
+        
+    try:
+        name = data["name"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+    matches = meds.lookup.perform(name)
+    return jsonify(message="ok", matches=matches)
+
+@blueprint.route('/add', methods = ['POST'])
+@auth.required
 def add():
     data = request.get_json()
         

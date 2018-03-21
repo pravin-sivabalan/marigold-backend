@@ -72,6 +72,41 @@ def lookup_approx(term):
     cleaned_candidates.sort(key=lambda canidate: canidate.rank)
     return cleaned_candidates
 
+RelatedConcept = col.namedtuple("RelatedConcept", ["name", "synonym", "cui", "tty"])
+def related_by_types(cui, types):
+    path = "/rxcui/{}/related.json".format(cui)
+
+    resp = rx.get(path, params=dict(tty=" ".join(types)))
+    resp.raise_for_status()
+
+    data = resp.json()
+
+    groups = data.get("relatedGroup")
+    concept_groups = groups.get("conceptGroup")
+
+    if concept_groups is None:
+        return []
+
+    rel_concepts = []
+
+    # Iterates over different types
+    for concept_group in concept_groups:
+        concept_props = concept_group.get("conceptProperties")
+        if concept_props is None:
+            continue
+
+        for concept_prop in concept_props:
+            rel_concepts.append(
+                RelatedConcept(
+                    name = concept_prop.get("name"),
+                    synonym = concept_prop.get("synonym"),
+                    cui = concept_prop.get("rxcui"),
+                    tty = concept_prop.get("tty")
+                )
+            )
+
+    return rel_concepts
+
 def props(cui):
     """
     Gets associated properties for a CUI, including its type and name

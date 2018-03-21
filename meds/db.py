@@ -36,7 +36,7 @@ class InvalidTemporary(Error):
 class UnknownMed(Error):
     """Specified medication has no equivalent in the NIH database"""
     status_code = 400
-    error_code = 313
+    error_code = 314
 
 add_cmd = """
     INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary)
