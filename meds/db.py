@@ -58,7 +58,7 @@ def parse_notification(notif):
     try:
         day = int(notif.get("day"))
         time = dt.datetime.strptime(notif.get("time"), "%Y-%m-%d:%H:%M:%S")
-    except:
+    except Exception as err:
         raise InvalidNotification(notif)
 
     return Notification(day=day, time=time)
@@ -78,6 +78,7 @@ def calc_run_out_date(quantity, notifications, start=None):
     notifications = [parse_notification(notif) for notif in notifications]
 
     while True:
+        notifications.sort(key=lambda noti: noti.time)
         notifications.sort(key=lambda noti: weekday_dist(cur_dt.day, noti.day))
 
         for noti in notifications:
