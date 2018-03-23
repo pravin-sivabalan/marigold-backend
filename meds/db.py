@@ -63,22 +63,33 @@ def parse_notification(notif):
 
     return Notification(day=day, time=time)
 
-def calc_run_out_date(quantity, notifications):
-    cur_dt = dt.datetime.now()
+def weekday_dist(start, end):
+    dist = end - start
+    if dist < 0:
+        dist = 7 + dist
+
+    return dist
+
+def calc_run_out_date(quantity, notifications, start=None):
+    if len(notifications) == 0:
+        return start
+
+    cur_dt = start if start is not None else dt.datetime.now()
     notifications = [parse_notification(notif) for notif in notifications]
 
-    for noti in notifications:
-        cur_dt = next_day_of_week(cur_dt, noti.day)
-        quantity -= 1
+    while True:
+        notifications.sort(key=lambda noti: weekday_dist(cur_dt.day, noti.day))
 
-        if quantity == 0:
-            cur_dt = cur_dt.replace(hour=noti.time.hour)
-            cur_dt = cur_dt.replace(minute=noti.time.minute)
-            cur_dt = cur_dt.replace(second=noti.time.second)
+        for noti in notifications:
+            cur_dt = next_day_of_week(cur_dt, noti.day)
+            quantity -= 1
 
-            break
+            if quantity == 0:
+                cur_dt = cur_dt.replace(hour=noti.time.hour)
+                cur_dt = cur_dt.replace(minute=noti.time.minute)
+                cur_dt = cur_dt.replace(second=noti.time.second)
 
-    return cur_dt
+                return cur_dt
 
 def add(name, cui, quantity, notifications, temporary):
     conn = db.conn()
