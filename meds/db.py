@@ -1,5 +1,6 @@
 
 import datetime as dt
+import collections as col
 
 import db
 import auth
@@ -33,12 +34,53 @@ class InvalidTemporary(Error):
     status_code = 400
     error_code = 313
 
+class InvalidNotification(Error):
+    """Invalid notification format given"""
+    status_code = 400
+    error_code = 314
+
+    def __init__(self, notification):
+        self.notification = notification
+
 add_cmd = """
     INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary)
     VALUES (%s, %s, %s, %s, %s, %s);
 """
 
-def add(name, cui, quantity, per_week, temporary):
+def next_day_of_week(date, day_of_week):
+    while date.weekday() != day_of_week:
+        date += dt.timedelta(days = 1)
+
+    return date
+
+Notification = col.namedtuple("Notification", ["day", "time"])
+def parse_notification(notif):
+    try:
+        day = int(notif.get("day"))
+        time = dt.datetime.strptime(notif.get("time"), "%Y-%m-%d:%H:%M:%S")
+    except:
+        raise InvalidNotification(notif)
+
+    return Notification(day=day, time=time)
+
+def calc_run_out_date(quantity, notifications):
+    cur_dt = dt.datetime.now()
+    notifications = [parse_notification(notif) for notif in notifications]
+
+    for noti in notifications:
+        cur_dt = next_day_of_week(cur_dt, noti.day)
+        quantity -= 1
+
+        if quantity == 0:
+            cur_dt = cur_dt.replace(hour=noti.time.hour)
+            cur_dt = cur_dt.replace(minute=noti.time.minute)
+            cur_dt = cur_dt.replace(second=noti.time.second)
+
+            break
+
+    return cur_dt
+
+def add(name, cui, quantity, notifications, temporary):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -57,9 +99,8 @@ def add(name, cui, quantity, per_week, temporary):
     except:
         raise InvalidTemporary()
 
-    weeks = int(quantity_parsed / per_week_parsed)
-    run_out_date = dt.date.today() + dt.timedelta(weeks=weeks)
 
+    run_out_date = calc_run_out_date(quantity, notifications)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
     conn.commit()
 
