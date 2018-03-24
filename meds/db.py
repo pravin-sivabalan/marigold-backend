@@ -102,18 +102,13 @@ def add(name, cui, quantity, notifications, temporary):
         raise InvalidQuantity()
 
     try:
-        per_week_parsed = int(per_week)
-    except:
-        raise InvalidPerWeek()
-
-    try:
         temporary_parsed = int(bool(temporary))
     except:
         raise InvalidTemporary()
 
 
-    run_out_date = calc_run_out_date(quantity, notifications)
-    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
+    run_out_date = calc_run_out_date(quantity_parsed, notifications)
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, temporary_parsed])
     conn.commit()
 
 for_user_cmd = """
