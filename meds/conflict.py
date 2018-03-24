@@ -27,8 +27,6 @@ def check():
     user_meds = meds.db.for_user()
     cuis = [med.get("rxcui") for med in user_meds if med.get("rxcui") is not None]
 
-    print(cuis)
-
     processed_interactions = []
 
     interactions = rxint.with_list(cuis) 
