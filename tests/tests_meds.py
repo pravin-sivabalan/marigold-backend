@@ -17,6 +17,31 @@ class MedsTestCase(BaseTestCase):
     def get_meds(self):
         return self.auth_get('/meds/for-user')
 
+    def autoadd_med(self, med_name, **kwargs):
+        rv = self.lookup_med(med_name)
+
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.assertEqual(data["message"], "ok")
+        match = data["matches"][0]
+        
+        rv = self.add_med(
+            cui = match["cui"],
+            name = match["name"],
+            quantity = kwargs.get("quantity") or 10,
+            notifications = kwargs.get("notifications") or [{ "day": 0, "time": "2018-01-01:05:00:00" }],
+            temporary = kwargs.get("temporary") or False,
+            alert_user = kwargs.get("alert_user") or False
+        )
+
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.assertEqual(data["message"], "ok")
+
+        return rv
+
     def test_lookup_med(self):
         rv = self.lookup_med("Ibuprofen")
 
@@ -104,9 +129,17 @@ class MedsTestCase(BaseTestCase):
         med = data["meds"][0]
         self.assertEqual(med["temporary"], 0)
 
-    def test_no_conflicts():
-        pass
+    def test_no_conflicts(self):
+        self.autoadd_med("Ibuprofen")
+        rv = self.autoadd_med("Zyrtec")
 
-    def test_conflicts():
-        pass
+        data = json.loads(rv.data)
+        self.assertEqual(len(data["conflicts"]), 0)
+
+    def test_conflicts(self):
+        self.autoadd_med("Digoxin")
+        rv = self.autoadd_med("Quinidine")
+
+        data = json.loads(rv.data)
+        self.assertEqual(len(data["conflicts"]), 1)
 

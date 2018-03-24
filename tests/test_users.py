@@ -82,7 +82,7 @@ class UserTestCase(BaseTestCase):
         self.login(email="abc@abc.com", password="123")
         
         rv = self.auth_post('/user/delete')
-        self.assertEquals(rv.status_code, 200)
+        self.assertEqual(rv.status_code, 200)
 
         rv = self.login(email="abc@abc.com", password="123", validate=False)
         self.assertEqual(rv.status_code, 400)
