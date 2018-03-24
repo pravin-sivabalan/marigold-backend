@@ -45,3 +45,19 @@ def remove():
 		return jsonify(message="ok")
 	else:
 		return jsonify(error="1", message="Notification not found")
+
+
+
+@blueprint.route('/cal', methods=['POST'])
+@auth.required
+def cal():
+	data = request.get_json()
+
+	try:
+		user_id = data["user_id"]
+	except KeyError as err:
+		raise MissingDataError(err)
+
+	noti = notification.db.cal(user_id)
+
+	return jsonify(message="ok", notifications = noti)
