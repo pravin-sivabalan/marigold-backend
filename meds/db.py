@@ -9,6 +9,8 @@ import rx.norm
 
 from error import Error
 
+import meds.fda
+
 id_field = 0
 name_field = 1
 dose_field = 2
@@ -43,8 +45,8 @@ class InvalidNotification(Error):
         self.notification = notification
 
 add_cmd = """
-    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary)
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, meication_id)
+    VALUES (%s, %s, %s, %s, %s, %s, %s);
 """
 
 def next_day_of_week(date, day_of_week):
@@ -112,8 +114,10 @@ def add(name, cui, quantity, notifications, temporary):
         raise InvalidTemporary()
 
 
+
+    medication_id = meds.fda.get_rx(cui)
     run_out_date = calc_run_out_date(quantity, notifications)
-    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed)])
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, int(temporary_parsed), medication_id])
     conn.commit()
 
 for_user_cmd = """
