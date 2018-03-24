@@ -10,6 +10,7 @@ import rx.norm
 from error import Error
 
 import meds.fda
+import notification.db
 
 id_field = 0
 name_field = 1
@@ -36,10 +37,15 @@ class InvalidTemporary(Error):
     status_code = 400
     error_code = 313
 
+class InvalidAlertUser(Error):
+    """Alert_user is not a parsable boolean"""
+    status_code = 400
+    error_code = 314
+
 class InvalidNotification(Error):
     """Invalid notification format given"""
     status_code = 400
-    error_code = 314
+    error_code = 315
 
     def __init__(self, notification):
         self.notification = notification
@@ -77,7 +83,6 @@ def calc_run_out_date(quantity, notifications, start=None):
         return start
 
     cur_dt = start if start is not None else dt.datetime.now()
-    notifications = [parse_notification(notif) for notif in notifications]
 
     while True:
         notifications.sort(key=lambda noti: noti.time)
@@ -94,7 +99,7 @@ def calc_run_out_date(quantity, notifications, start=None):
 
                 return cur_dt
 
-def add(name, cui, quantity, notifications, temporary):
+def add(name, cui, quantity, notifications, temporary, alert_user):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -108,12 +113,22 @@ def add(name, cui, quantity, notifications, temporary):
     except:
         raise InvalidTemporary()
 
+    try:
+        alert_user_parsed = bool(alert_user)
+    except:
+        raise InvalidAlertUser()
+
+    notifications = [parse_notification(notif) for notif in notifications]
     run_out_date = calc_run_out_date(quantity_parsed, notifications)
 
     medication_id = meds.fda.get_rx(cui)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date, temporary_parsed, medication_id])
 
     conn.commit()
+
+    if alert_user:
+        for notif in notifications:
+            notification.db.add(medication_id, notif.day, notif.time)
 
 for_user_cmd = """
     SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds
