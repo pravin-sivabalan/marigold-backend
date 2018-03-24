@@ -7,6 +7,7 @@ from error import Error, MissingDataError
 import meds.db
 import meds.lookup
 import meds.conflict
+import meds.fda
 
 blueprint = Blueprint("meds", __name__)
 
@@ -37,7 +38,9 @@ def add():
     except KeyError as err:
         raise MissingDataError(err)
 
+
     meds.db.add(name, cui, quantity, notifications, temporary)
+
     return jsonify(message="ok", conflicts=meds.conflict.check())
 
 @blueprint.route('/for-user', methods = ['GET'])
