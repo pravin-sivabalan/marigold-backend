@@ -8,78 +8,44 @@ class MedsTestCase(BaseTestCase):
         super().setUp()
         self.fake_user()
 
-    def add_med(self, name, expir_date):
-        return self.auth_post('/meds/add', dict(
-            name=name,
-            expir_date=expir_date
-        ))
+    def add_med(self, **kwargs):
+        return self.auth_post('/meds/add', kwargs)
+
+    def lookup_med(self, name):
+        return self.auth_post('/meds/lookup', dict(name=name))
+
+    def test_lookup_med(self):
+        rv = self.lookup_med("Ibuprofen")
+
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.assertEqual(data["message"], "ok")
+        self.assertGreater(len(data["matches"]), 0)
 
     def test_add_med(self):
-        rv = self.add_med(
-            name="Med-X",
-            dose=42,
-            expir_date='01 01 1942'
-        )
+        rv = self.lookup_med("Ibuprofen")
 
         self.assertEqual(rv.status_code, 200)
         data = json.loads(rv.data)
 
-        self.assertEqual(data["message"], "ok")
+        match = data["matches"][0]
 
-    def test_list_meds(self):
-        med1 = dict(
-            name="X",
-            dose=1,
-            expir_date='01 01 2001'
-        )
-
-        med2 = dict(
-            name="Y",
-            dose=2,
-            expir_date='01 29 2002'
-        )
-
-        med3 = dict(
-            name="Z",
-            dose=42,
-            expir_date='12 04 2002'
-        )
-
-        meds_to_ins = [med1, med2, med3]
-        for med in meds_to_ins:
-            rv = self.add_med(**med)
-            self.assertEqual(rv.status_code, 200)
-
-        rv = self.auth_get('/meds/for-user')
-        self.assertEqual(rv.status_code, 200)
-        
-        data = json.loads(rv.data)
-        self.assertEqual(data["message"], "ok")
-
-        meds = data["meds"]
-        self.assertEqual(len(meds), 3)
-
-    def test_med_delete(self):
-        self.fake_user()
+        cui = match["cui"]
+        name = match["name"]
 
         rv = self.add_med(
-            name="DELETE",
-            dose=42,
-            expir_date='01 01 1998'
+            cui = cui,
+            name = name,
+            quantity = 10,
+            notifications = [
+                { "day": 2, "time": "2018-01-01:05:00:00" }
+            ],
+            temporary = True,
+            alert_user = True
         )
+
         self.assertEqual(rv.status_code, 200)
-    
-        rv = self.auth_post('/meds/delete', dict(
-            id=1
-        ))
-        self.assertEqual(rv.status_code, 200)
-
         data = json.loads(rv.data)
-        self.assertEqual(data["message"], "ok")
 
-        rv = self.auth_get('/meds/for-user')
-        data = json.loads(rv.data)
         self.assertEqual(data["message"], "ok")
-
-        meds = data["meds"]
-        self.assertEqual(len(meds), 0) 

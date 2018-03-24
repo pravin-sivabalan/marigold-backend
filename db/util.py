@@ -29,7 +29,7 @@ tables["user_meds"] = """
         `medication_id` int(11) DEFAULT NULL,
         `name` mediumtext NOT NULL,
         `quantity` int(11) DEFAULT NULL,
-        `run_out_date` date DEFAULT NULL,
+        `run_out_date` datetime DEFAULT NULL,
         `temporary` int(11) DEFAULT NULL,
         `rxcui` mediumtext,
         PRIMARY KEY (`id`)
@@ -37,18 +37,31 @@ tables["user_meds"] = """
 """
 
 tables["meds"] = """
-    CREATE TABLE `meds` (
+    CREATE TABLE `{}` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `rxcui` mediumtext,
+      `purpose` mediumtext,
+      `inactive_ingredient` mediumtext,
+      `warnings` mediumtext,
+      `questions` mediumtext,
+      `when_using` mediumtext,
+      `generic_name` mediumtext,
+      `indications_and_usage` mediumtext,
+      `information_for_patients` mediumtext,
+      `brand_name` mediumtext,
+      `route` mediumtext,
+      `warnings_and_cautions` mediumtext,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+"""
+
+tables["notifications"] = """
+    CREATE TABLE `notifications` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
-        `substance_name` mediumtext,
-        `adverse_reaction` mediumtext,
-        `application_number` mediumtext,
-        `boxed_warning` mediumtext,
-        `brand_name` mediumtext,
-        `drug_interactions` mediumtext,
-        `generic_name` mediumtext,
-        `information_for_patients` mediumtext,
-        `product_type` mediumtext,
-        `route` mediumtext,
+        `user_id` int(11) NOT NULL,
+        `medication_id` int(11) NOT NULL,
+        `day_to_take` int(11) NOT NULL,
+        `time_to_take` datetime NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 """

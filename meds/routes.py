@@ -35,7 +35,7 @@ def add():
         quantity = data["quantity"]
         notifications = data["notifications"]
         temporary = data["temporary"]
-        alert_user = data["alert-user"]
+        alert_user = data["alert_user"]
     except KeyError as err:
         raise MissingDataError(err)
 
