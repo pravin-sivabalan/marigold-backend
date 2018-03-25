@@ -66,16 +66,16 @@ class InvalidInput(Error):
         self.bad_fields = fields
 
 create_user_cmd = """
-    INSERT INTO users (first_name, last_name, email, password)
-    VALUES (%s, %s, %s, %s);
-"""
-
-create_user_cmd_leagues = """
-    INSERT INTO users (first_name, last_name, email, password, league)
+    INSERT INTO users (first_name, last_name, email, password, allergies)
     VALUES (%s, %s, %s, %s, %s);
 """
 
-def create_user(first, last, email, passwd, league):
+create_user_cmd_leagues = """
+    INSERT INTO users (first_name, last_name, email, password, league, allergies)
+    VALUES (%s, %s, %s, %s, %s, %s);
+"""
+
+def create_user(first, last, email, passwd, league, allergies):
     # add validation
     invalidFields = []
     if first is None:
@@ -99,9 +99,9 @@ def create_user(first, last, email, passwd, league):
 
     hashed_password = auth.calc_hash(passwd)
     if league is None:
-        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password])
+        found = cursor.execute(create_user_cmd, [first, last, email, hashed_password, allergies])
     else:
-        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, league])
+        found = cursor.execute(create_user_cmd_leagues, [first, last, email, hashed_password, league, allergies])
     if found == 0:
         raise InvalidData()
 
@@ -133,7 +133,7 @@ def find_user(uid, custom_query=find_user_with_id):
 
 def user_profile(uid):
     return find_user(uid, """
-        SELECT first_name, last_name, email, league FROM users
+        SELECT first_name, last_name, email, league, allergies FROM users
         WHERE id = %s
     """)
 

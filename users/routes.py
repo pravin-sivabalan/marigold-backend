@@ -40,8 +40,9 @@ def register():
     email = data.get('email')
     password = data.get('password')
     league = data.get('league')
+    allergies = data.get('allergies')
 
-    user_id = users.db.create_user(first_name, last_name, email, password, league)
+    user_id = users.db.create_user(first_name, last_name, email, password, league, allergies)
     return jsonify(
         message="ok",
         jwt=auth.token.create(user_id).decode("utf-8")

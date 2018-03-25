@@ -11,6 +11,8 @@ import json
 import random
 import string
 
+import sys
+
 def rand_str(size):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
