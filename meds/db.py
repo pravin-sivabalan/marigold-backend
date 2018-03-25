@@ -12,6 +12,8 @@ from error import Error
 import meds.fda
 import notification.db
 
+import meds.fda
+
 id_field = 0
 name_field = 1
 dose_field = 2
@@ -126,11 +128,15 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     run_out_date = calc_run_out_date(quantity_parsed, notifications)
 
     medication_id = meds.fda.get_rx(cui)
+    print("medication_id", medication_id)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
 
     cursor.execute(select_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
     medication_notification_id = cursor.fetchall()
-    print(medication_notification_id[0][0])
+
+
+
+
 
     conn.commit()
 

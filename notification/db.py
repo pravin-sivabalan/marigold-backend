@@ -40,6 +40,37 @@ def remove(medication_id):
 
 cal_cmd = """SELECT * FROM marigold.notifications WHERE user_id = %s"""
 
+def is_next_days(today, check):
+
+	if check == today:
+		return 1
+
+	lower = today - 5
+	upper = today + 5
+
+
+	if lower < 0:
+		lower = 0
+	else:
+		lower = today - minus_number
+
+
+	if upper > 6:
+		upper = 6
+
+
+	print(lower, check, upper)
+
+
+	if check <= lower:
+		return 1
+
+	if check >= upper:
+		return 1
+
+
+
+
 def cal(user_id):
 	conn = db.conn()
 	cursor =  conn.cursor()
@@ -57,9 +88,13 @@ def cal(user_id):
 		row['run_out_date'] = x[5]
 
 		now_time = datetime.datetime.now() 
-		
-		if x[5] > now_time:
+		number = datetime.datetime.today().weekday()
+
+		#print(number, x[3])
+
+		if x[5] > now_time and is_next_days(0, x[3]) == 1:
 			output.append(row)
+		
 		
 
 	return output

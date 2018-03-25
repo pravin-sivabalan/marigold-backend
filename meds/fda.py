@@ -39,7 +39,7 @@ def insert_drug(num,results):
 		insert_vals = "\"" +num + "\","
 
 		if results.get('purpose') != None:
-			purpose = (results.get('purpose'))[0]
+			purpose = ((results.get('purpose'))[0]).replace("\"", "")
 			output['purpose'] = purpose[8:]
 
 		if results.get('inactive_ingredient') != None:
@@ -57,7 +57,7 @@ def insert_drug(num,results):
 			output['when_using'] = (results.get('when_using'))[0]
 
 		if results.get('warnings_and_cautions') != None:
-			output['warnings_and_cautions'] = (results.get('warnings_and_cautions'))[0]
+			output['warnings_and_cautions'] = ((results.get('warnings_and_cautions'))[0]).replace("\"","")
 
 		if results.get('indications_and_usage') != None:
 			output['indications_and_usage'] = (results.get('indications_and_usage'))[0]
