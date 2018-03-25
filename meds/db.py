@@ -79,10 +79,10 @@ def weekday_dist(start, end):
     return dist
 
 def calc_run_out_date(quantity, notifications, start=None):
+    cur_dt = start if start is not None else dt.datetime.now()
+
     if len(notifications) == 0:
         return start
-
-    cur_dt = start if start is not None else dt.datetime.now()
 
     while True:
         notifications.sort(key=lambda noti: noti.time)
