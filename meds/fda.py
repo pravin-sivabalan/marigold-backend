@@ -78,6 +78,12 @@ def insert_drug(num,results):
 
 		insert_cols = insert_cols[:-1]
 		insert_vals = insert_vals[:-2]
+		insert_cols = insert_cols.replace("\"","")
+		insert_vals = insert_cols.replace("\"","")
+
+		insert_cols = insert_cols.replace("\'","")
+		insert_vals = insert_cols.replace("\'","")
+
 
 		add_cmd = """ INSERT INTO marigold.meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
 
