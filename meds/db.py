@@ -12,6 +12,8 @@ from error import Error
 import meds.fda
 import notification.db
 
+import meds.fda
+
 id_field = 0
 name_field = 1
 dose_field = 2
@@ -53,6 +55,10 @@ class InvalidNotification(Error):
 add_cmd = """
     INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id)
     VALUES (%s, %s, %s, %s, %s, %s, %s);
+"""
+
+select_cmd = """
+    SELECT id FROM  user_meds  WHERE user_id = '%s' AND rxcui = %s AND name = %s AND quantity = '%s' AND run_out_date = %s AND temporary = '%s' AND medication_id = '%s';
 """
 
 def next_day_of_week(date, day_of_week):
@@ -124,11 +130,18 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     medication_id = meds.fda.get_rx(cui)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
 
+    cursor.execute(select_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
+    medication_notification_id = cursor.fetchall()
+
+
+
+
+
     conn.commit()
 
     if alert_user:
         for notif in notifications:
-            notification.db.add(medication_id, notif.day, notif.time)
+            notification.db.add(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
 
 for_user_cmd = """
     SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds

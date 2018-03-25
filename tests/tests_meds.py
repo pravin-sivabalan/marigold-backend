@@ -1,6 +1,7 @@
 
 from tests import BaseTestCase
-
+import time, datetime
+from dateutil import parser
 import json
 
 class MedsTestCase(BaseTestCase):
@@ -142,4 +143,293 @@ class MedsTestCase(BaseTestCase):
 
         data = json.loads(rv.data)
         self.assertEqual(len(data["conflicts"]), 1)
+
+
+    def test_update_meds_name(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
+        new_med_id = json.loads(rv.data)
+        med_id = new_med_id['meds'][0]['id']
+
+        update = {"med_id":med_id, "name":"Will"}
+        self.auth_post('/update/med', update)
+
+        rvp = self.get_meds()
+        new_update_med_id = json.loads(rvp.data)
+        update_med_name = new_update_med_id['meds'][0]['name']
+
+        self.assertEqual("Will",update_med_name)
+
+
+    def test_update_meds_quantity(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
+        new_med_id = json.loads(rv.data)
+        med_id = new_med_id['meds'][0]['id']
+
+        update = {"med_id":med_id, "quantity":"9"}
+        self.auth_post('/update/med', dict(update))
+
+        rvp = self.get_meds()
+        new_update_med_id = json.loads(rvp.data)
+        update_med_quantity = new_update_med_id['meds'][0]['quantity']
+
+        self.assertEqual(update_med_quantity,9)
+
+
+    def test_update_meds_none(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
+        new_med_id = json.loads(rv.data)
+        med_id = new_med_id['meds'][0]['id']
+
+        update = {"med_id":med_id}
+        self.auth_post('/update/med', dict(update))
+
+        rvp = self.get_meds()
+        new_update_med_id = json.loads(rvp.data)
+
+        self.assertEqual(new_med_id, new_update_med_id)
+
+
+    def test_update_meds_temporary(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
+        new_med_id = json.loads(rv.data)
+        med_id = new_med_id['meds'][0]['id']
+
+        update = {"med_id":med_id, "temporary":"1"}
+        self.auth_post('/update/med', dict(update))
+
+        rvp = self.get_meds()
+        new_update_med_id = json.loads(rvp.data)
+        update_med_temporary = new_update_med_id['meds'][0]['temporary']
+
+        self.assertEqual(1,update_med_temporary)
+
+
+
+
+    def test_run_out_1(self):
+
+        quantity = 7
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 3, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+                { "day": 5, "time": "2018-01-01:16:00:00" },
+                { "day": 6, "time": "2018-01-01:16:00:00" }
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 7) 
+
+
+        run_out = parser.parse(run_out_date)
+
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_2(self):
+
+        quantity = 30
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+            ]
+
+        self.autoadd_med("Advil", quantity=30, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 68) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+
+    def test_run_out_3(self):
+
+        quantity = 6
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+    def test_run_out_4(self):
+
+        quantity = 7
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" }
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 22) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_5(self):
+
+        quantity = 5
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 3, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 5) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_6(self):
+
+        quantity = 5
+        notifications = [
+
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 1) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_7(self):
+
+        quantity = 10
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 3, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_8(self):
+
+        quantity = 12
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 3, "time": "2018-01-01:16:00:00" },
+                { "day": 5, "time": "2018-01-01:16:00:00" }
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 27) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_9(self):
+
+        quantity = 17
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" },
+                { "day": 2, "time": "2018-01-01:16:00:00" },
+                { "day": 3, "time": "2018-01-01:16:00:00" },
+                { "day": 4, "time": "2018-01-01:16:00:00" },
+                { "day": 5, "time": "2018-01-01:16:00:00" },
+                { "day": 6, "time": "2018-01-01:16:00:00" }
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+    def test_run_out_10(self):
+
+        quantity = 5
+        notifications = [
+                { "day": 0, "time": "2018-01-01:16:00:00" },
+                { "day": 1, "time": "2018-01-01:16:00:00" }
+            ]
+
+        self.autoadd_med("Advil", quantity=quantity, notifications=notifications)
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        run_out_date = data['meds'][0]['run_out_date']
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 15) 
+
+
+        run_out = parser.parse(run_out_date)
+        self.assertEqual(run_out.date(),check_time.date())
+
+
+
+        
+
+
 
