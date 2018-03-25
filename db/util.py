@@ -62,6 +62,7 @@ tables["notifications"] = """
         `medication_id` int(11) NOT NULL,
         `day_to_take` int(11) NOT NULL,
         `time_to_take` datetime NOT NULL,
+        `run_out_date` datetime NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 """
