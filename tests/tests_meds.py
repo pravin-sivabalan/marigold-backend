@@ -227,7 +227,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 7) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 6) 
 
 
         run_out = parser.parse(run_out_date)
@@ -249,7 +249,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 68) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 67) 
 
 
         run_out = parser.parse(run_out_date)
@@ -271,7 +271,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
 
 
         run_out = parser.parse(run_out_date)
@@ -290,7 +290,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 22) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 21) 
 
 
         run_out = parser.parse(run_out_date)
@@ -313,7 +313,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 5) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 4) 
 
 
         run_out = parser.parse(run_out_date)
@@ -332,7 +332,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 1) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 0) 
 
 
         run_out = parser.parse(run_out_date)
@@ -355,7 +355,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
 
 
         run_out = parser.parse(run_out_date)
@@ -376,7 +376,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 27) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 26) 
 
 
         run_out = parser.parse(run_out_date)
@@ -401,7 +401,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 16) 
 
 
         run_out = parser.parse(run_out_date)
@@ -421,7 +421,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 15) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 14) 
 
 
         run_out = parser.parse(run_out_date)
