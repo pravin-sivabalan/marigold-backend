@@ -85,8 +85,7 @@ def weekday_dist(start, end):
     return dist
 
 def calc_run_out_date(quantity, notifications, start=None):
-    cur_dt = start if start is not None else dt.datetime.now()
-
+    cur_dt = start
     if len(notifications) == 0:
         return start
 
@@ -125,7 +124,7 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
         raise InvalidAlertUser()
 
     notifications = [parse_notification(notif) for notif in notifications]
-    run_out_date = calc_run_out_date(quantity_parsed, notifications)
+    run_out_date = calc_run_out_date(quantity_parsed, notifications, start=dt.datetime.now())
 
     medication_id = meds.fda.get_rx(cui)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
