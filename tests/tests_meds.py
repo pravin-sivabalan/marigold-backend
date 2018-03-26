@@ -27,11 +27,12 @@ class MedsTestCase(BaseTestCase):
         self.assertEqual(data["message"], "ok")
         match = data["matches"][0]
         
+        notifications = kwargs.get("notifications") if "notifications" in kwargs else [{ "day": 0, "time": "2018-01-01:05:00:00" }]
         rv = self.add_med(
             cui = match["cui"],
             name = match["name"],
             quantity = kwargs.get("quantity") or 10,
-            notifications = kwargs.get("notifications") or [{ "day": 0, "time": "2018-01-01:05:00:00" }],
+            notifications = notifications,
             temporary = kwargs.get("temporary") or False,
             alert_user = kwargs.get("alert_user") or False
         )

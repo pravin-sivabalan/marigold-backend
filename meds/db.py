@@ -61,10 +61,14 @@ select_cmd = """
     SELECT id FROM  user_meds  WHERE user_id = '%s' AND rxcui = %s AND name = %s AND quantity = '%s' AND run_out_date = %s AND temporary = '%s' AND medication_id = '%s';
 """
 
-def next_day_of_week(date, day_of_week):
-    date += dt.timedelta(days = 1)
+def next_day_of_week(date, noti):
+    if date.weekday() == noti.day:
+        temp_date = date.replace(year=noti.time.year, month=noti.time.month, day=noti.time.day)
 
-    while date.weekday() != day_of_week:
+        if temp_date >= noti.time:
+            date += dt.timedelta(days = 1)
+
+    while date.weekday() != noti.day:
         date += dt.timedelta(days = 1)
 
     return date
@@ -87,7 +91,7 @@ def weekday_dist(start, end):
     return dist
 
 def calc_run_out_date(quantity, notifications, start):
-    cur_dt = dt.datetime.now()
+    cur_dt = start
     if len(notifications) == 0:
         return start
 
@@ -96,7 +100,7 @@ def calc_run_out_date(quantity, notifications, start):
         notifications.sort(key=lambda noti: weekday_dist(cur_dt.day, noti.day))
 
         for noti in notifications:
-            cur_dt = next_day_of_week(cur_dt, noti.day)
+            cur_dt = next_day_of_week(cur_dt, noti)
             quantity -= 1
 
             if quantity == 0:
