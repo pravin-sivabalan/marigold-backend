@@ -62,6 +62,8 @@ select_cmd = """
 """
 
 def next_day_of_week(date, day_of_week):
+    date += dt.timedelta(days = 1)
+
     while date.weekday() != day_of_week:
         date += dt.timedelta(days = 1)
 
@@ -84,8 +86,8 @@ def weekday_dist(start, end):
 
     return dist
 
-def calc_run_out_date(quantity, notifications, start=None):
-    cur_dt = start
+def calc_run_out_date(quantity, notifications, start):
+    cur_dt = dt.datetime.now()
     if len(notifications) == 0:
         return start
 
