@@ -48,10 +48,9 @@ def remove():
 
 
 
-@blueprint.route('/cal', methods=['POST'])
+@blueprint.route('/cal', methods=['GET'])
 @auth.required
 def cal():
-	data = request.get_json()
 	user_id = auth.uid()
 
 	noti = notification.db.cal(user_id)
