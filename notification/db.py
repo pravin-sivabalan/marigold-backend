@@ -13,6 +13,8 @@ def add(medication_id, day_to_take, time_to_take, run_out_date):
 	conn = db.conn()
 	cursor =  conn.cursor()
 
+	#print(add_cmd % (auth.uid(), medication_id, day_to_take, time_to_take, run_out_date))
+
 	cursor.execute(add_cmd, [auth.uid(), medication_id, day_to_take, time_to_take, run_out_date] )
 
 	cursor.execute(get_id_of_add, [auth.uid(), medication_id, day_to_take, time_to_take])
