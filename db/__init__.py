@@ -15,7 +15,8 @@ def make_conn():
             host = db_table["host"],
             user = db_table["user"],
             passwd = db_table["pass"],
-            db = db_table["name"])
+            db = db_table["name"], 
+            use_unicode=True, charset="utf8")
 
 def conn():
     if not hasattr(g, 'db_conn'):
