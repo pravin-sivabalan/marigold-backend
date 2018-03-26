@@ -130,17 +130,18 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     medication_id = meds.fda.get_rx(cui)
     cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
 
-    cursor.execute(select_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
-    medication_notification_id = cursor.fetchall()
+    cursor.execute("SELECT LAST_INSERT_ID();")
+    get_id = cursor.fetchall()
 
 
-
+    medication_notification_id = get_id[0][0]
 
 
     conn.commit()
 
     if alert_user:
         for notif in notifications:
+            print(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
             notification.db.add(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
 
 for_user_cmd = """
