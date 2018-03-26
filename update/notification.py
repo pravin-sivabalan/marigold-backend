@@ -110,13 +110,10 @@ for row in data :
 
 
 
-	now_time = datetime.datetime.now() - datetime.timedelta(hour = 1)
-	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 2.4) 
-	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 2.4)
+	now_time = datetime.datetime.now() - datetime.timedelta(minutes = 60)
+	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4) 
+	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 62.4)
 
-
-    lower_bound_time = datetime.datetime.now () - datetime.timedelta(hour = 1)
-    upper_bound_time = datetime.datetime.now () - datetime.timedelta(hour = 1) 
 
 	if(day == datetime.datetime.today().weekday() and time_to_take.time() > lower_bound_time.time() and time_to_take.time() < upper_bound_time.time()):
 		mail(email, med_name, user_name)
