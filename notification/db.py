@@ -94,7 +94,7 @@ def cal(user_id):
 
 		#print(number, x[3])
 
-		if x[5] > now_time and is_next_days(0, x[3]) == 1:
+		if x[5] > now_time:
 			output.append(row)
 		
 		

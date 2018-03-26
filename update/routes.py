@@ -54,12 +54,8 @@ def update_med():
     except KeyError as err:
         raise MissingDataError(err)
 
-
     if(data.get('name')):
         update.db.update_med_name(data.get('name'), med_id)
-
-    if(data.get('dose')):
-        update.db.update_med_dose(data.get('dose'), med_id)
 
     if(data.get('quantity')):
         update.db.update_med_quantity(data.get('quantity'), med_id)
