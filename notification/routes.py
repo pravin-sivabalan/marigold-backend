@@ -52,11 +52,7 @@ def remove():
 @auth.required
 def cal():
 	data = request.get_json()
-
-	try:
-		user_id = data["user_id"]
-	except KeyError as err:
-		raise MissingDataError(err)
+	user_id = auth.uid()
 
 	noti = notification.db.cal(user_id)
 
