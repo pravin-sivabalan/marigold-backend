@@ -6,7 +6,29 @@ and classifications
 import rx
 import collections as col
 
-def classes_raw(cui):
+ClassDef = col.namedtuple("ClassDef", ["name", "cid", "typ"])
+def classes_of_types(types):
+    """
+    Returns all classes of a given type
+    """
+    path = "/rxclass/allClasses.json"
+
+    resp = rx.get(path, params=dict(classTypes=" ".join(types)))
+    resp.raise_for_status()
+
+    classes = []
+    concepts = resp.json().get("rxclassMinConceptList").get("rxclassMinConcept")
+
+    for concept in concepts:
+        classes.append(ClassDef(
+            name = concept.get("className"),
+            cid = concept.get("classId"),
+            typ = concept.get("classType")
+        ))
+    
+    return classes
+
+def classes_for_raw(cui):
     """
     Returns all classes that a given RxCui belongs to, along with related concepts 
     """
@@ -19,8 +41,7 @@ def classes_raw(cui):
     return data
 
 Class = col.namedtuple("Class", ["id", "name", "typ", "relation"])
-
-def classes(cui):
+def classes_for(cui):
     """
     Cleans up info from `classes_raw` and merges related concept info
     Returns two arrays, the first are classes that are related by ingredient, the second are classes related by products that use the specified cui
