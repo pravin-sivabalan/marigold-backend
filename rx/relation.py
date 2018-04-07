@@ -28,6 +28,7 @@ def classes_of_types(types):
     
     return classes
 
+Concept = col.namedtuple("Concept", ["name", "cui", "tty"])
 def cuis_with_class(cid, rel=None, types=None):
     path = "/rxclass/classMembers.json"
 
@@ -40,8 +41,18 @@ def cuis_with_class(cid, rel=None, types=None):
     resp = rx.get(path, params=params)
     resp.raise_for_status()
 
-    data = resp.json()
-    return data
+    data = resp.json().get("drugMemberGroup").get("drugMember")
+
+    concepts = []
+    for node in data:
+        concept = node.get("minConcept")
+        concepts.append(Concept(
+            name = concept.get("name"),
+            cui = concept.get("rxcui"),
+            tty = concept.get("tty")
+        ))
+
+    return concepts
 
 def classes_for_raw(cui):
     """
