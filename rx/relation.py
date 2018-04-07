@@ -28,6 +28,21 @@ def classes_of_types(types):
     
     return classes
 
+def cuis_with_class(cid, rel=None, types=None):
+    path = "/rxclass/classMembers.json"
+
+    # TODO use different sources for relations
+    params = dict(classId=cid, relaSource="NDFRT", rela=rel, trans=0)
+
+    if types is not None:
+        params["ttys"] = " ".join(types)
+
+    resp = rx.get(path, params=params)
+    resp.raise_for_status()
+
+    data = resp.json()
+    return data
+
 def classes_for_raw(cui):
     """
     Returns all classes that a given RxCui belongs to, along with related concepts 
