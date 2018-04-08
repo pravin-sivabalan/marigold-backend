@@ -154,12 +154,25 @@ for_user_cmd = """
     WHERE user_id = %s
 """
 
+get_med_cmd = """
+    SELECT * from meds
+    WHERE id = %s
+"""
+
 def for_user():
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
     
     cursor.execute(for_user_cmd, [auth.uid()])
     users_meds = cursor.fetchall()
+
+    for user_med in users_meds:
+        med_id = user_med.get("medication_id")
+
+        cursor.execute(get_med_cmd, [med_id])
+        row = cursor.fetchone()
+
+        user_med.update(row)
    
     return users_meds
 

@@ -63,7 +63,8 @@ def generate_symptoms():
                     typ = concept.get("classType")
                 )
 
-                if "diseases" not in classDef.name.lower():
+                name = classDef.name.lower()
+                if "diseases" not in name and "disorders" not in name:
                     sympts.append(classDef)
             else:
                 traverse(child.get(tree_key))
