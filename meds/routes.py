@@ -55,6 +55,19 @@ def conflicts():
     conflicts = meds.conflict.check()
     return jsonify(message="ok", conflicts=conflicts)
 
+@blueprint.route('/refill', methods = ['POST'])
+@auth.required
+def refill():
+    data = request.get_json()
+
+    try:
+        med_id = data["med_id"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+    meds.db.refill(med_id)
+    return jsonify(message="ok")
+
 @blueprint.route('/delete', methods = ['POST'])
 @auth.required
 def delete():
