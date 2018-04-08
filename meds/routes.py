@@ -8,6 +8,7 @@ import meds.db
 import meds.lookup
 import meds.conflict
 import meds.fda
+import meds.by_symptom
 
 blueprint = Blueprint("meds", __name__)
 
@@ -23,6 +24,19 @@ def lookup():
 
     matches = meds.lookup.perform(name)
     return jsonify(message="ok", matches=matches)
+
+@blueprint.route('/search', methods = ['POST'])
+@auth.required
+def search():
+    data = request.get_json()
+        
+    try:
+        class_id = data["class_id"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+    drugs = meds.by_symptom.perform(class_id)
+    return jsonify(message="ok", drugs=drugs)
 
 @blueprint.route('/add', methods = ['POST'])
 @auth.required
