@@ -4,6 +4,7 @@ from flask import request, jsonify, Blueprint, json
 import auth
 from error import Error, MissingDataError
 
+import re, locale
 import meds.db
 import meds.lookup
 import meds.conflict
@@ -76,6 +77,10 @@ def delete():
 @blueprint.route('/pic', methods = ['POST'])
 @auth.required
 def picture():
+
+    bad_words = open("bad_words.txt", "r")
+    bad_words_list = bad_words.read().split(',')
+
     data = request.get_json()
     pic_url = data["url"]
     search_url = "https://api.ocr.space/parse/image"
@@ -90,11 +95,28 @@ def picture():
 
 
 
+
+
     response = req.post(search_url, data=payload)
     output = response.json()
+    results = output.get('ParsedResults')
+    text = results[0]
+    lines = text.get('TextOverlay').get('Lines')
+    words_list = []
 
-    print(output.get('ParsedResults'))
+
+    for e in lines:
+        line = e.get('Words')
+        for l in line:
+                word = l.get('WordText')
+                if re.sub(r'[^a-zA-Z ]', '', word) and len(re.sub(r'[^a-zA-Z ]', '', word)) > 3:
+                    words_list.append(re.sub(r'[^a-zA-Z ]', '', word))
 
 
+    good_words = [x for x in words_list if x not in bad_words_list]
 
-    return jsonify(message="ok",)
+    print(good_words)
+    print()
+
+
+    return jsonify(message="ok", res = lines)
