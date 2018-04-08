@@ -6,6 +6,9 @@ import rx.norm as rxn
 import rx.relation as rxrel
 
 import re
+import os.path
+
+import cache
 
 def is_valid_drug(drug):
     name = drug.lower()
@@ -68,6 +71,6 @@ def generate_symptoms():
     traverse(tree.get(tree_key))
 
     sympts = list(set(sympts))
-
     sympts.sort(key=lambda clas: clas.name)
-    return sympts
+
+    cache.dump("symptoms", sympts)
