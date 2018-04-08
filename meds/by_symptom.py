@@ -39,3 +39,28 @@ def perform(cid, rel="may_treat", limit=25):
     drugs.sort()
 
     return drugs
+
+def generate_symptoms():
+    """
+    Meant to be called outside of the server, to precompute symptoms
+    Its too slow to do it per request
+    """
+    disease_cid = rxrel.class_by_name("Disease")
+    tree = rxrel.get_tree_raw(disease_cid.cid)
+    tree_key = "rxclassTree"
+
+    sympts = []
+    def traverse(node):
+        for child in node:
+            if child.get(tree_key) is None:
+                concept = child.get("rxclassMinConceptItem")
+                sympts.append(rxrel.ClassDef(
+                    name = concept.get("className"),
+                    cid = concept.get("classId"),
+                    typ = concept.get("classType")
+                ))
+            else:
+                traverse(child.get(tree_key))
+
+    traverse(tree.get(tree_key))
+    return sympts

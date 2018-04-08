@@ -28,6 +28,42 @@ def classes_of_types(types):
     
     return classes
 
+def class_by_name(name, types=None):
+    path = "/rxclass/class/byName.json"
+    
+    params = dict(className=name)
+    if types is not None:
+        params["types"] = " ".join(types)
+
+    resp = rx.get(path, params=params)
+    resp.raise_for_status()
+
+    data = resp.json()
+    concepts = data.get("rxclassMinConceptList")
+
+    if concepts is None:
+        return None
+
+    concepts = concepts.get("rxclassMinConcept")
+    if len(concepts) == 0:
+        return None
+
+    concept = concepts[0]
+    return ClassDef(
+        name = concept.get("className"),
+        cid = concept.get("classId"),
+        typ = concept.get("classType")
+    )
+
+def get_tree_raw(cid):
+    path = "/rxclass/classTree.json"
+
+    resp = rx.get(path, params=dict(classId=cid))
+    resp.raise_for_status()
+
+    data = resp.json()
+    return data
+
 Concept = col.namedtuple("Concept", ["name", "cui", "tty"])
 def cuis_with_class(cid, rel=None, types=None):
     path = "/rxclass/classMembers.json"
