@@ -54,13 +54,20 @@ def generate_symptoms():
         for child in node:
             if child.get(tree_key) is None:
                 concept = child.get("rxclassMinConceptItem")
-                sympts.append(rxrel.ClassDef(
+                classDef = rxrel.ClassDef(
                     name = concept.get("className"),
                     cid = concept.get("classId"),
                     typ = concept.get("classType")
-                ))
+                )
+
+                if "diseases" not in classDef.name.lower():
+                    sympts.append(classDef)
             else:
                 traverse(child.get(tree_key))
 
     traverse(tree.get(tree_key))
+
+    sympts = list(set(sympts))
+
+    sympts.sort(key=lambda clas: clas.name)
     return sympts
