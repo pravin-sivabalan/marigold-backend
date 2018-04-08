@@ -1,5 +1,5 @@
 
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, json
 
 import auth
 from error import Error, MissingDataError
@@ -8,6 +8,9 @@ import meds.db
 import meds.lookup
 import meds.conflict
 import meds.fda
+
+import requests as req
+import collections as col
 
 blueprint = Blueprint("meds", __name__)
 
@@ -67,3 +70,31 @@ def delete():
 
     meds.db.delete(med_id)
     return jsonify(message="ok")
+
+
+
+@blueprint.route('/pic', methods = ['POST'])
+@auth.required
+def picture():
+    data = request.get_json()
+    pic_url = data["url"]
+    search_url = "https://api.ocr.space/parse/image"
+
+    headers = {"apikey":"8cec6b890688957","Content-Type":"application/json"}
+    payload = {
+        'language':'eng',
+        'isOverlayRequired':'true',
+        'url': pic_url,
+        'apikey':'8cec6b890688957'
+    }
+
+
+
+    response = req.post(search_url, data=payload)
+    output = response.json()
+
+    print(output.get('ParsedResults'))
+
+
+
+    return jsonify(message="ok",)
