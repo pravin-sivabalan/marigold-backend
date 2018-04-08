@@ -169,7 +169,10 @@ def for_user():
     for user_med in users_meds:
         med_id = user_med.get("medication_id")
 
-        cursor.execute(get_med_cmd, [med_id])
+        count = cursor.execute(get_med_cmd, [med_id])
+        if count == 0:
+            continue
+
         row = cursor.fetchone()
 
         del row["id"]
