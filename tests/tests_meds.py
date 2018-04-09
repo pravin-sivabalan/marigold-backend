@@ -429,6 +429,12 @@ class MedsTestCase(BaseTestCase):
         self.assertEqual(run_out.date(),check_time.date())
 
 
+    def test_picture_1(self):
+
+
+        self.assertEqual(1)
+
+
 
         
 
