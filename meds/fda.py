@@ -5,7 +5,7 @@ import requests as req
 import collections as col
 
 
-search_cmd = """SELECT id FROM marigold.meds WHERE rxcui = %s """
+search_cmd = """SELECT id FROM meds WHERE rxcui = %s """
 
 def get_rx(num):
     conn = db.conn()
@@ -82,7 +82,7 @@ def insert_drug(num,results):
     #insert_vals = insert_cols.replace("\"","")
 
 
-    add_cmd = """ INSERT INTO marigold.meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
+    add_cmd = """ INSERT INTO meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
 
     conn = db.conn()
     cursor = conn.cursor()
