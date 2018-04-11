@@ -118,8 +118,8 @@ def picture():
 
     file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
     file_name = "static/img/" + file_name_o
-    pic_url = "https://marigoldapp.net/img/" + file_name_o
-
+    ###pic_url = "https://marigoldapp.net/img/" + file_name_o
+    pic_url = "https://marigoldapp.net/img/OsALIAMpu0.png"
     im = Image.open(BytesIO(base64.b64decode(image_data)))
     im.save(file_name)
 
@@ -161,7 +161,4 @@ def picture():
     except:
         return jsonify(message="Could not read label successfully.")
 
-    
-    print("Hello World")
-
-    return jsonify(message="ok")
+    return jsonify(message="ok", words=good_words)
