@@ -12,6 +12,7 @@ import meds.db
 import meds.lookup
 import meds.conflict
 import meds.fda
+import meds.by_symptom
 
 import requests as req
 import collections as col
@@ -30,6 +31,19 @@ def lookup():
 
     matches = meds.lookup.perform(name)
     return jsonify(message="ok", matches=matches)
+
+@blueprint.route('/search', methods = ['POST'])
+@auth.required
+def search():
+    data = request.get_json()
+        
+    try:
+        class_id = data["class_id"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+    drugs = meds.by_symptom.perform(class_id)
+    return jsonify(message="ok", drugs=drugs)
 
 @blueprint.route('/add', methods = ['POST'])
 @auth.required
@@ -61,6 +75,19 @@ def for_user():
 def conflicts():
     conflicts = meds.conflict.check()
     return jsonify(message="ok", conflicts=conflicts)
+
+@blueprint.route('/refill', methods = ['POST'])
+@auth.required
+def refill():
+    data = request.get_json()
+
+    try:
+        med_id = data["med_id"]
+    except KeyError as err:
+        raise MissingDataError(err)
+
+    meds.db.refill(med_id)
+    return jsonify(message="ok")
 
 @blueprint.route('/delete', methods = ['POST'])
 @auth.required

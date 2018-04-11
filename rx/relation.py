@@ -6,7 +6,91 @@ and classifications
 import rx
 import collections as col
 
-def classes_raw(cui):
+ClassDef = col.namedtuple("ClassDef", ["name", "cid", "typ"])
+def classes_of_types(types):
+    """
+    Returns all classes of a given type
+    """
+    path = "/rxclass/allClasses.json"
+
+    resp = rx.get(path, params=dict(classTypes=" ".join(types)))
+    resp.raise_for_status()
+
+    classes = []
+    concepts = resp.json().get("rxclassMinConceptList").get("rxclassMinConcept")
+
+    for concept in concepts:
+        classes.append(ClassDef(
+            name = concept.get("className"),
+            cid = concept.get("classId"),
+            typ = concept.get("classType")
+        ))
+    
+    return classes
+
+def class_by_name(name, types=None):
+    path = "/rxclass/class/byName.json"
+    
+    params = dict(className=name)
+    if types is not None:
+        params["types"] = " ".join(types)
+
+    resp = rx.get(path, params=params)
+    resp.raise_for_status()
+
+    data = resp.json()
+    concepts = data.get("rxclassMinConceptList")
+
+    if concepts is None:
+        return None
+
+    concepts = concepts.get("rxclassMinConcept")
+    if len(concepts) == 0:
+        return None
+
+    concept = concepts[0]
+    return ClassDef(
+        name = concept.get("className"),
+        cid = concept.get("classId"),
+        typ = concept.get("classType")
+    )
+
+def get_tree_raw(cid):
+    path = "/rxclass/classTree.json"
+
+    resp = rx.get(path, params=dict(classId=cid))
+    resp.raise_for_status()
+
+    data = resp.json()
+    return data
+
+Concept = col.namedtuple("Concept", ["name", "cui", "tty"])
+def cuis_with_class(cid, rel=None, types=None):
+    path = "/rxclass/classMembers.json"
+
+    # TODO use different sources for relations
+    params = dict(classId=cid, relaSource="NDFRT", rela=rel, trans=0)
+
+    if types is not None:
+        params["ttys"] = " ".join(types)
+
+    resp = rx.get(path, params=params)
+    resp.raise_for_status()
+
+    data = resp.json().get("drugMemberGroup").get("drugMember")
+
+    concepts = []
+    for node in data:
+        concept = node.get("minConcept")
+        concepts.append(Concept(
+            name = concept.get("name"),
+            cui = concept.get("rxcui"),
+            tty = concept.get("tty")
+        ))
+
+    return concepts
+
+def classes_for_raw(cui):
     """
     Returns all classes that a given RxCui belongs to, along with related concepts 
     """
@@ -19,8 +103,7 @@ def classes_raw(cui):
     return data
 
 Class = col.namedtuple("Class", ["id", "name", "typ", "relation"])
-
-def classes(cui):
+def classes_for(cui):
     """
     Cleans up info from `classes_raw` and merges related concept info
     Returns two arrays, the first are classes that are related by ingredient, the second are classes related by products that use the specified cui

@@ -15,6 +15,9 @@ class MedsTestCase(BaseTestCase):
     def lookup_med(self, name):
         return self.auth_post('/meds/lookup', dict(name=name))
 
+    def search(self, class_id):
+        return self.auth_post('/meds/search', dict(class_id=class_id))
+
     def get_meds(self):
         return self.auth_get('/meds/for-user')
 
@@ -428,15 +431,43 @@ class MedsTestCase(BaseTestCase):
         run_out = parser.parse(run_out_date)
         self.assertEqual(run_out.date(),check_time.date())
 
-
-    def test_picture_1(self):
-
-
-        self.assertEqual(1)
-
-
-
+    def test_label_purpose(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
         
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
 
+        med = data["meds"][0]
+        self.assertEqual(med["purpose"], "Fever reducer/Pain reliever")
 
+    def test_label_brand(self):
+        self.autoadd_med("Zoloft")
+        rv = self.get_meds()
 
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        med = data["meds"][0]
+        self.assertEqual(med["brand_name"], "Zoloft")
+
+    def test_search_basic(self):
+        class_id = "N0000001242" # Fever
+        
+        rv = self.search(class_id)
+
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.assertGreater(len(data["drugs"]), 0)
+
+    def test_search_has_drug(self):
+        class_id = "N0000001242" # Fever
+        
+        rv = self.search(class_id)
+
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        drugs = data["drugs"]
+        self.assertIn("Advil", drugs)

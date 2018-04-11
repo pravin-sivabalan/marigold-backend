@@ -154,14 +154,70 @@ for_user_cmd = """
     WHERE user_id = %s
 """
 
+get_med_cmd = """
+    SELECT * from meds
+    WHERE id = %s
+"""
+
 def for_user():
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
     
     cursor.execute(for_user_cmd, [auth.uid()])
     users_meds = cursor.fetchall()
+
+    for user_med in users_meds:
+        med_id = user_med.get("medication_id")
+
+        count = cursor.execute(get_med_cmd, [med_id])
+        if count == 0:
+            continue
+
+        row = cursor.fetchone()
+
+        del row["id"]
+        user_med.update(row)
    
     return users_meds
+
+def refill(med_id):
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+
+    cursor.execute("""
+        SELECT * FROM user_meds
+        WHERE id = %s
+    """, [med_id])
+    med = cursor.fetchone()
+
+    cursor.execute("""
+        SELECT * FROM notifications
+        WHERE medication_id = %s
+    """, [med_id])
+    notifs_db = cursor.fetchall()
+
+    notifs = []
+    for notif_db in notifs_db:
+        day = notif_db["day_to_take"]
+        time = notif_db["time_to_take"]
+
+        notifs.append(Notification(day=day, time=time))
+
+    run_out_date = calc_run_out_date(med.get("quantity"), notifs, start=dt.datetime.now())
+
+    cursor.execute("""
+        UPDATE user_meds
+        SET run_out_date = %s
+        WHERE id = %s
+    """, [run_out_date, med_id])
+
+    cursor.execute("""
+        UPDATE notifications
+        SET run_out_date = %s
+        WHERE medication_id = %s
+    """, [run_out_date, med_id])
+
+    conn.commit()
 
 class MedIdNotFound(Error):
     """Given medicine ID was not in the database"""
