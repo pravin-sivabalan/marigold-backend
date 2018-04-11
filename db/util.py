@@ -1,4 +1,3 @@
-
 import MySQLdb as sql
 import hashlib
 

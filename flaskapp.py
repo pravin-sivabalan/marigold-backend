@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request,send_file
+from flask import Flask, render_template, request, send_file
 import click
 
 import subprocess
@@ -43,6 +43,11 @@ def connectiokn_test():
         output = "User: " + config['database']['user'] + "<br>Host: " + config['database']['host'] 
         
         return output
+
+@app.route('/img/<img>')
+def post_image(img):
+    file_to_return = "static/img/" + img
+    return send_file(file_to_return)
 
 
 

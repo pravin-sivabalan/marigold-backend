@@ -2,7 +2,10 @@
 from flask import request, jsonify, Blueprint, json
 
 import auth
+import base64, string, random
+from PIL import Image
 from error import Error, MissingDataError
+from io import BytesIO
 
 import re, locale
 import meds.db
@@ -82,41 +85,56 @@ def picture():
     bad_words_list = bad_words.read().split(',')
 
     data = request.get_json()
-    pic_url = data["url"]
-    search_url = "https://api.ocr.space/parse/image"
-
-    headers = {"apikey":"8cec6b890688957","Content-Type":"application/json"}
-    payload = {
-        'language':'eng',
-        'isOverlayRequired':'true',
-        'url': pic_url,
-        'apikey':'8cec6b890688957'
-    }
+    picture_data = data["photo"]
+    image_data = bytes(picture_data, encoding="ascii")
 
 
+    file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
+    file_name = "static/img/" + file_name_o
+    pic_url = "https://marigoldapp.net/img/" + file_name_o
+
+    im = Image.open(BytesIO(base64.b64decode(image_data)))
+    im.save(file_name)
 
 
+    try:
+        search_url = "https://api.ocr.space/parse/image"
+        headers = {"apikey":"8cec6b890688957","Content-Type":"application/json"}
 
-    response = req.post(search_url, data=payload)
-    output = response.json()
-    results = output.get('ParsedResults')
-    text = results[0]
-    lines = text.get('TextOverlay').get('Lines')
-    words_list = []
+        payload = {
+            'language':'eng',
+            'isOverlayRequired':'true',
+            'url': pic_url,
+            'apikey':'8cec6b890688957'
+        }
+
+        response = req.post(search_url, data=payload)
+        output = response.json()
 
 
-    for e in lines:
-        line = e.get('Words')
-        for l in line:
+        results = output.get('ParsedResults')
+        text = results[0]
+        lines = text.get('TextOverlay').get('Lines')
+        words_list = []
+
+
+        for e in lines:
+            line = e.get('Words')
+            for l in line:
                 word = l.get('WordText')
                 if re.sub(r'[^a-zA-Z ]', '', word) and len(re.sub(r'[^a-zA-Z ]', '', word)) > 3:
-                    words_list.append(re.sub(r'[^a-zA-Z ]', '', word))
+                    words_list.append((re.sub(r'[^a-zA-Z ]', '', word)).lower())
+
+        good_words = [x for x in words_list if x not in bad_words_list]
+
+        print(good_words)
+        print()
 
 
-    good_words = [x for x in words_list if x not in bad_words_list]
+    except:
+        return jsonify(message="Could not read label successfully.")
 
-    print(good_words)
-    print()
+    
+    print("Hello World")
 
-
-    return jsonify(message="ok", res = lines)
+    return jsonify(message="ok")
