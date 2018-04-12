@@ -46,10 +46,9 @@ def connectiokn_test():
 
 @app.route('/img/<img>')
 def post_image(img):
-    file_to_return = "/static/img/" + img
-    #return send_file(file_to_return)
-    print(file_to_return)
-    return "<html><body><img style=\"max-height:500px;max-width:500px\;\" src=\"" + file_to_return + "\"/></body></html>"
+    file_to_return = "static/img/" + img
+    return send_file(file_to_return)
+
 
 
 
