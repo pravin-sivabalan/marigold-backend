@@ -1,12 +1,14 @@
 
 from flask import request, jsonify, Blueprint, json
 
+
 import auth
 import base64, string, random
 from base64 import decodestring
 from PIL import Image
 from error import Error, MissingDataError
 from io import BytesIO
+from time import sleep
 
 import re, locale
 import meds.db
@@ -114,25 +116,14 @@ def picture():
 
     data = request.get_json()
     picture_data = data["photo"]
-
     image_data = bytes(picture_data, encoding="ascii")
-
-
     file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
     file_name = "static/img/" + file_name_o
-    ###pic_url = "https://marigoldapp.net/img/" + file_name_o
     pic_url = "https://marigoldapp.net/img/OsALIAMpu0.png"
+    
     
     with open(file_name,"wb") as f:
         f.write(decodestring(image_data))
-
-
-
-    
-
-    #im = im.resize((int(size[0]/8),int(size[1]/8)),Image.ANTIALIAS)
-    #im.save(file_name)
-
 
     try:
         search_url = "https://api.ocr.space/parse/image"
@@ -141,19 +132,24 @@ def picture():
         payload = {
             'language':'eng',
             'isOverlayRequired':'true',
-            'url': pic_url,
             'apikey':'8cec6b890688957'
         }
 
-        response = req.post(search_url, data=payload)
-        output = response.json()
 
+        with open(file_name, "rb") as f: 
+            r = req.post(
+                'https://api.ocr.space/parse/image',
+                files={file_name: f},
+                data=payload
+            )
 
-        results = output.get('ParsedResults')
+        output = r.content.decode()
+        output = json.loads(output)
+        results = output.get('ParsedResults')    
+        
         text = results[0]
         lines = text.get('TextOverlay').get('Lines')
         words_list = []
-
 
         for e in lines:
             line = e.get('Words')
@@ -164,11 +160,27 @@ def picture():
 
         good_words = [x for x in words_list if x not in bad_words_list]
 
-        print(good_words)
-        print()
+        best_word = ""
+        best_size = 0
 
+        for w in good_words:
+            try:
+                matches = meds.lookup.perform(w)
+
+                if len(matches) > best_size:
+                    best_word = w
+                sleep(0.1)
+            except:
+                pass
+
+        if best_word == "":
+            print("None found")
+        else:
+            print(best_word)
+
+        print(meds.lookup.perform(best_word))
 
     except:
         return jsonify(message="Could not read label successfully.")
 
-    return jsonify(message="ok", words=good_words)
+    return jsonify(message="ok")
