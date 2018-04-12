@@ -121,6 +121,9 @@ def picture():
     ###pic_url = "https://marigoldapp.net/img/" + file_name_o
     pic_url = "https://marigoldapp.net/img/OsALIAMpu0.png"
     im = Image.open(BytesIO(base64.b64decode(image_data)))
+    size = im.size
+
+    im = im.resize((int(size[0]/8),int(size[1]/8)),Image.ANTIALIAS)
     im.save(file_name)
 
 
