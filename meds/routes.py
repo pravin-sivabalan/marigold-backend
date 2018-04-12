@@ -3,6 +3,7 @@ from flask import request, jsonify, Blueprint, json
 
 import auth
 import base64, string, random
+from base64 import decodestring
 from PIL import Image
 from error import Error, MissingDataError
 from io import BytesIO
@@ -113,6 +114,7 @@ def picture():
 
     data = request.get_json()
     picture_data = data["photo"]
+
     image_data = bytes(picture_data, encoding="ascii")
 
 
@@ -120,11 +122,16 @@ def picture():
     file_name = "static/img/" + file_name_o
     ###pic_url = "https://marigoldapp.net/img/" + file_name_o
     pic_url = "https://marigoldapp.net/img/OsALIAMpu0.png"
-    im = Image.open(BytesIO(base64.b64decode(image_data)))
-    size = im.size
+    
+    with open(file_name,"wb") as f:
+        f.write(decodestring(image_data))
 
-    im = im.resize((int(size[0]/8),int(size[1]/8)),Image.ANTIALIAS)
-    im.save(file_name)
+
+
+    
+
+    #im = im.resize((int(size[0]/8),int(size[1]/8)),Image.ANTIALIAS)
+    #im.save(file_name)
 
 
     try:
