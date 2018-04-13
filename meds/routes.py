@@ -183,4 +183,4 @@ def picture():
     except:
         return jsonify(message="Could not read label successfully.")
 
-    return jsonify(message="ok")
+    return jsonify(message="ok", matches=meds.lookup.perform(best_word))
