@@ -111,7 +111,7 @@ def delete():
 @auth.required
 def picture():
 
-    bad_words = open("bad_words.txt", "r")
+    bad_words = open("/home/ubuntu/flaskapp/bad_words.txt", "r")
     bad_words_list = bad_words.read().split(',')
 
     data = request.get_json()
