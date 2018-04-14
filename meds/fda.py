@@ -72,7 +72,10 @@ def insert_drug(num,results):
             conn = db.conn()
             cursor = conn.cursor()
             banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
-            cursor.execute(banned_cmd, [output['brand_name']])
+            me_name = output['brand_name']
+            split_name = me_name.split(' ')
+            split_user = split_name[0]
+            cursor.execute(banned_cmd, [split_user])
             leagues = cursor.fetchall()
             league_banned = ""
             for l in leagues:

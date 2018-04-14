@@ -111,7 +111,7 @@ for row in data :
 
 
 	now_time = datetime.datetime.now() - datetime.timedelta(minutes = 60)
-	upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4) 
+	upper_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 57.6) 
 	lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 62.4)
 
 
