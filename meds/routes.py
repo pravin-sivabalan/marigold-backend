@@ -9,6 +9,7 @@ from PIL import Image
 from error import Error, MissingDataError
 from io import BytesIO
 from time import sleep
+import os
 
 import re, locale
 import meds.db
@@ -124,6 +125,7 @@ def picture():
     
     with open(file_name,"wb") as f:
         f.write(decodestring(image_data))
+    os.chmod(file_name, 0o777)
 
     try:
         search_url = "https://api.ocr.space/parse/image"
