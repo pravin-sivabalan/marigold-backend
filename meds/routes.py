@@ -118,7 +118,7 @@ def picture():
     picture_data = data["photo"]
     image_data = bytes(picture_data, encoding="ascii")
     file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
-    file_name = "static/img/" + file_name_o
+    file_name = "/home/ubuntu/flaskapp/static/img/" + file_name_o
     pic_url = "https://marigoldapp.net/img/OsALIAMpu0.png"
     
     
