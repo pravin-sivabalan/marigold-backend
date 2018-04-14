@@ -238,3 +238,17 @@ def delete(med_id):
         raise MedIdNotFound()
 
     conn.commit()
+
+
+banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
+
+def banned_check(name):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(banned_cmd, [name])
+    leagues = cursor.fetchall()
+    print(leagues)
+
+
+
