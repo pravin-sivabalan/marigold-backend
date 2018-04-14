@@ -175,13 +175,12 @@ def picture():
                 pass
 
         if best_word == "":
-            print("None found")
-        else:
-            print(best_word)
+            return jsonify(message="Could not read label successfully.")
 
-        print(meds.lookup.perform(best_word))
+
+        best_match = meds.lookup.perform(best_word)
 
     except:
         return jsonify(message="Could not read label successfully.")
 
-    return jsonify(message="ok", matches=meds.lookup.perform(best_word))
+    return jsonify(message="ok", matches=best_match)
