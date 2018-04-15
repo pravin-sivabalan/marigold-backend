@@ -17,6 +17,7 @@ import meds.lookup
 import meds.conflict
 import meds.fda
 import meds.by_symptom
+import meds.allergy
 
 import requests as req
 import collections as col
@@ -64,9 +65,10 @@ def add():
     except KeyError as err:
         raise MissingDataError(err)
 
-
-    meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
-    return jsonify(message="ok", conflicts=meds.conflict.check())
+    med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
+    return jsonify(message="ok", 
+        conflicts=meds.conflict.check(), 
+        allergy_conflicts=meds.allergy.check(med_id))
 
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
@@ -77,8 +79,8 @@ def for_user():
 @blueprint.route('/conflicts', methods = ['GET'])
 @auth.required
 def conflicts():
-    conflicts = meds.conflict.check()
-    return jsonify(message="ok", conflicts=conflicts)
+    return jsonify(message="ok", 
+        conflicts=meds.conflict.check())
 
 @blueprint.route('/refill', methods = ['POST'])
 @auth.required
