@@ -149,6 +149,8 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
             print(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
             notification.db.add(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
 
+    return get_id[0][0]
+
 for_user_cmd = """
     SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds
     WHERE user_id = %s

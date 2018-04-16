@@ -108,7 +108,7 @@ def classes_for(cui):
     Cleans up info from `classes_raw` and merges related concept info
     Returns two arrays, the first are classes that are related by ingredient, the second are classes related by products that use the specified cui
     """
-    raw_data = classes_raw(cui)
+    raw_data = classes_for_raw(cui)
 
     related_by_in = set()
     related_by_prod = set()
