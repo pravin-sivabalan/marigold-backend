@@ -87,8 +87,9 @@ tables_to_clear = [
     "users",
     "user_meds",
     "meds",
-    "notifications"
-]
+    "notifications",
+    "banned"
+] 
 
 def clear():
     conn = db.conn()

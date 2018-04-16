@@ -68,7 +68,9 @@ def add():
     med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
     return jsonify(message="ok", 
         conflicts=meds.conflict.check(), 
-        allergy_conflicts=meds.allergy.check(med_id))
+        allergy_conflicts=meds.allergy.check(med_id),
+        banned_leagues=meds.db.check_leagues(cui, name))
+
 
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
