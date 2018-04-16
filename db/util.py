@@ -82,6 +82,23 @@ def init():
         except sql.Error as err:
             print(err)
 
+
+tables_to_clear = [
+    "users",
+    "user_meds",
+    "meds",
+    "notifications"
+]
+
+def clear():
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    for table in tables_to_clear:
+        cursor.execute("TRUNCATE TABLE {};".format(table))
+
+    conn.commit()
+
 def add_user(first, last, email, passwd):
     conn = db.conn()
     cursor = conn.cursor()
