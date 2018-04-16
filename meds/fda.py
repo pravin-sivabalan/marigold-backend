@@ -35,8 +35,6 @@ def insert_drug(num,results):
     insert_cols = "rxcui, "
     insert_vals = "\"" +num + "\","
 
-
-
     if results.get('purpose') != None:
         purpose = ((results.get('purpose'))[0]).replace("\"", "")
         output['purpose'] = purpose[8:]
