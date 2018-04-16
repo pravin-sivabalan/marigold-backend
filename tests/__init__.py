@@ -22,7 +22,7 @@ class BaseTestCase(ut.TestCase):
         self.app.testing = True
 
         with flaskapp.app.app_context() as ctx:
-            db.util.init()
+            db.util.clear()
 
     def post(self, route, data, headers=None):
         if headers is not None:
