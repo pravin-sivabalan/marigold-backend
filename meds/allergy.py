@@ -44,7 +44,12 @@ def check(med_id):
     for related_med in related_meds:
         for allergy in allergies:
             if allergy.lower() in related_med.name.lower():
-                conflicts.append(ingred_msg.format(related_med.name, allergy))
+                conflicts.append(dict(
+                    drug = med_id,
+                    allergy = allergy,
+                    desc = ingred_msg.format(related_med.name, allergy),
+                    type = "active_ingredient"
+                ))
 
     # Check FDA inactive ingredients
     inactive_ingreds_str = med["inactive_ingredient"]
@@ -54,7 +59,12 @@ def check(med_id):
         for ingred in inactive_ingreds:
             for allergy in allergies:
                 if allergy.lower() in ingred.lower():
-                    conflicts.append(inactive_ingred_msg.format(ingred, allergy))
+                    conflicts.append(dict(
+                        drug = med_id,
+                        allergy = allergy,
+                        desc = inactive_ingred_msg.format(ingred, allergy),
+                        type = "inactive_ingredient"
+                    ))
 
     # Check for allergies in warning label
     warning_label = med["warnings"]
@@ -63,6 +73,11 @@ def check(med_id):
         
         for allergy in allergies:
             if allergy.lower() in warning_label:
-                conflicts.append(warning_label_msg.format(med["name"], allergy))
+                conflicts.append(dict(
+                    drug = med_id,
+                    allergy = allergy, 
+                    desc = warning_label_msg.format(med["name"], allergy),
+                    type = "warning_label"
+                ))
     
     return conflicts
