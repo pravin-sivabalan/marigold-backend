@@ -53,8 +53,8 @@ class InvalidNotification(Error):
         self.notification = notification
 
 add_cmd = """
-    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id)
-    VALUES (%s, %s, %s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id, banned)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 select_cmd = """
@@ -110,6 +110,22 @@ def calc_run_out_date(quantity, notifications, start):
 
                 return cur_dt
 
+def get_leagues_banned_in(name):
+
+    conn = db.conn()
+    cursor = conn.cursor()
+    banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
+    cursor.execute(banned_cmd, [name.split(' ',1)[0]])
+    leagues = cursor.fetchall()
+    league_banned = ""
+
+    for l in leagues:
+        league_banned += l[0] + ','
+
+    return league_banned[:-1]
+
+
+
 def add(name, cui, quantity, notifications, temporary, alert_user):
     conn = db.conn()
     cursor = conn.cursor()
@@ -133,7 +149,10 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     run_out_date = calc_run_out_date(quantity_parsed, notifications, start=dt.datetime.now())
 
     medication_id = meds.fda.get_rx(cui)
-    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id])
+
+    leagues_banned_in = get_leagues_banned_in(name)
+
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id, leagues_banned_in])
 
     cursor.execute("SELECT LAST_INSERT_ID();")
     get_id = cursor.fetchall()
@@ -152,7 +171,7 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     return get_id[0][0]
 
 for_user_cmd = """
-    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary FROM user_meds
+    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary, banned FROM user_meds
     WHERE user_id = %s
 """
 
@@ -179,7 +198,8 @@ def for_user():
 
         del row["id"]
         user_med.update(row)
-   
+
+
     return users_meds
 
 def refill(med_id):
@@ -240,3 +260,6 @@ def delete(med_id):
         raise MedIdNotFound()
 
     conn.commit()
+
+
+

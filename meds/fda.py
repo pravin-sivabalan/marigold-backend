@@ -67,6 +67,19 @@ def insert_drug(num,results):
 
         if openfda.get('brand_name') != None:
             output['brand_name'] = (openfda.get('brand_name'))[0]
+            conn = db.conn()
+            cursor = conn.cursor()
+            banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
+            me_name = output['brand_name']
+            split_name = me_name.split(' ')
+            split_user = split_name[0]
+            cursor.execute(banned_cmd, [split_user])
+            leagues = cursor.fetchall()
+            league_banned = ""
+            for l in leagues:
+                league_banned += l[0] + ','
+
+            output['banned'] = league_banned[:-1]
 
     for x in output:
         insert_cols += x + ","
@@ -75,12 +88,6 @@ def insert_drug(num,results):
 
     insert_cols = insert_cols[:-1]
     insert_vals = insert_vals[:-2]
-    #insert_cols = insert_cols.replace("\"","")
-    #insert_vals = insert_cols.replace("\"","")
-
-    #insert_cols = insert_cols.replace("\'","")
-    #insert_vals = insert_cols.replace("\"","")
-
 
     add_cmd = """ INSERT INTO meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
 
