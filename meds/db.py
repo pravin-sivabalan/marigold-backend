@@ -211,7 +211,6 @@ def for_user():
         user_med.update(row)
 
 
-    print(users_meds)
     return users_meds
 
 def refill(med_id):
