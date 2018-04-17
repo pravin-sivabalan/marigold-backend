@@ -67,7 +67,7 @@ def add():
 
     med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
     return jsonify(message="ok", 
-        conflicts=meds.conflict.check(), 
+        conflicts=meds.conflict.check_with_id(med_id), 
         allergy_conflicts=meds.allergy.check(med_id),
         banned_leagues=meds.db.check_leagues(cui, name))
 
