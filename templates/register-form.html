@@ -7,13 +7,13 @@
 
 
 <div class="container text-center top">
-	<h1 class="marigold-orange">Login</h1>
+	<h1 class="marigold-orange">Register</h1>
 </div>
 
 
 <div class="container">
 
-<form action="{{ url_for('web.login_submit') }}" method="post" >
+<form action="{{ url_for('web.register_submit') }}" method="post" >
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
     <input type="email" class="form-control" name="email" placeholder="Enter email" required>
@@ -44,7 +44,7 @@
   </div>
 
   <div style="display: none" class="text-center form-group row" id="pass_show">
-    	<h3 class="marigold-orange">Password don't match.</h3>
+    	<h3 class="marigold-orange">Password do not match.</h3>
   </div>
 
 

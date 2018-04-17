@@ -27,12 +27,12 @@ blueprint = Blueprint("web", __name__)
 def index():
     return render_template('index.html')
 
-@blueprint.route('/login')
+@blueprint.route('/register')
 def login():
-    return render_template('login-form.html')
+    return render_template('register-form.html')
 
-@blueprint.route('/login/submit', methods=['POST'])
-def login_submit():
+@blueprint.route('/register/submit', methods=['POST'])
+def register_submit():
     email = request.form['email']
     first = request.form['first']
     last = request.form['last']
