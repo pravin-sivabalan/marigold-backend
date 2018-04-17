@@ -59,6 +59,11 @@ def insert_drug(num,results):
     if results.get('indications_and_usage') != None:
         output['indications_and_usage'] = (results.get('indications_and_usage'))[0]
 
+    if results.get('warnings_and_cautions') != None:
+        output['possible_side_effects'] = (results.get('warnings_and_cautions'))[0]
+    elif results.get('warnings') != None:
+        output['possible_side_effects'] = (results.get('warnings'))[0]
+
     if results.get('openfda') != None:
         openfda = results.get('openfda')
 
