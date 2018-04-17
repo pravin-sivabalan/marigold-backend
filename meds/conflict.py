@@ -18,7 +18,8 @@ def find_med_with_cui(cui):
     cursor = conn.cursor(db.DictCursor)
     
     count = cursor.execute(meds_with_cui_cmd, [auth.uid(), cui])
-    assert count > 0, "Number of meds with given cui {} should be greater than 0".format(cui)
+    if count == 0:
+        return None
 
     med = cursor.fetchall()[0]
     return med.get("id")
@@ -27,6 +28,16 @@ def check():
     user_meds = meds.db.for_user()
     cuis = [med.get("rxcui") for med in user_meds if med.get("rxcui") is not None]
 
+    return check_list(cuis)
+
+def check_with(cui):
+    user_meds = meds.db.for_user()
+    cuis = [med.get("rxcui") for med in user_meds if med.get("rxcui") is not None]
+    
+    cuis.append(cui)
+    return check_list(cuis)
+
+def check_list(cuis):
     processed_interactions = []
 
     interactions = rxint.with_list(cuis) 

@@ -41,7 +41,6 @@ def lookup():
 @auth.required
 def search():
     data = request.get_json()
-        
     try:
         class_id = data["class_id"]
     except KeyError as err:
@@ -81,6 +80,13 @@ def for_user():
 def conflicts():
     return jsonify(message="ok", 
         conflicts=meds.conflict.check())
+
+@blueprint.route('/conflicts-with/<cui>', methods = ['GET'])
+@auth.required
+def conflicts_with(cui):
+    return jsonify(message="ok",
+        conflicts=meds.conflict.check_with(cui),
+        allergy_conflicts=meds.allergy.check_with(cui))
 
 @blueprint.route('/refill', methods = ['POST'])
 @auth.required
