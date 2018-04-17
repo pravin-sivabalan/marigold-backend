@@ -268,7 +268,6 @@ def check_leagues(cui, name):
     cursor = conn.cursor()
     leagues = cursor.execute(get_user_leagues, [auth.uid()])
     leagues = cursor.fetchall()
-    print("THESE are my leaguse", leagues[0][0])
 
     if leagues[0][0] == "":
         return ""
