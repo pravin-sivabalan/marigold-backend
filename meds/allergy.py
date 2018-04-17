@@ -7,6 +7,7 @@ import auth
 from error import Error
 
 import rx.norm
+import meds.fda as fda
 
 def get_allergies():
     user = auth.user()
@@ -28,8 +29,6 @@ def check(med_id):
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
 
-    allergies = get_allergies()
-
     cursor.execute("""
         SELECT * FROM user_meds LEFT JOIN meds
         ON user_meds.medication_id = meds.id
@@ -37,7 +36,34 @@ def check(med_id):
     """, [med_id])
 
     med = cursor.fetchone()
+    return check_med(med)
+
+def check_with(cui):
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+
+    med = rx.norm.props(cui)
+    med_id = fda.get_rx(cui)
+
+    cursor.execute("""
+        SELECT * FROM meds
+        where id = %s
+    """, [med_id])
+
+    fda_med = cursor.fetchone()
+    med.update(fda_med)
+
+    med["id"] = None
+    med["rxcui"] = cui
+
+    return check_med(med)
+
+def check_med(med):
+    conflicts = []
+    allergies = get_allergies()
+
     cui = med["rxcui"]
+    med_id = med["id"]
 
     # Check active ingreidents via NIH
     related_meds = rx.norm.related_by_types(cui, ["IN"])
