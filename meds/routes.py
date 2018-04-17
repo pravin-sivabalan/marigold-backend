@@ -22,6 +22,8 @@ import meds.allergy
 import requests as req
 import collections as col
 
+import rx.relation as rxrel
+
 blueprint = Blueprint("meds", __name__)
 
 @blueprint.route('/lookup', methods = ['POST'])
@@ -42,11 +44,15 @@ def lookup():
 def search():
     data = request.get_json()
     try:
-        class_id = data["class_id"]
+        symptom = data["symptom"]
     except KeyError as err:
         raise MissingDataError(err)
 
-    drugs = meds.by_symptom.perform(class_id)
+    class_id = rxrel.class_by_name(symptom, types=["DISEASE"])
+    if class_id is None:
+        return jsonify(message="none")
+
+    drugs = meds.by_symptom.perform(class_id.cid)
     return jsonify(message="ok", drugs=drugs)
 
 @blueprint.route('/add', methods = ['POST'])

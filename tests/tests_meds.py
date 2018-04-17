@@ -16,8 +16,8 @@ class MedsTestCase(BaseTestCase):
     def lookup_med(self, name):
         return self.auth_post('/meds/lookup', dict(name=name))
 
-    def search(self, class_id):
-        return self.auth_post('/meds/search', dict(class_id=class_id))
+    def search(self, symptom):
+        return self.auth_post('/meds/search', dict(symptom=symptom))
 
     def get_meds(self):
         return self.auth_get('/meds/for-user')
@@ -458,8 +458,9 @@ class MedsTestCase(BaseTestCase):
 
     def test_search_basic(self):
         class_id = "N0000001242" # Fever
+        symptom = "Fever"
         
-        rv = self.search(class_id)
+        rv = self.search(symptom)
 
         self.assertEqual(rv.status_code, 200)
         data = json.loads(rv.data)
@@ -468,8 +469,9 @@ class MedsTestCase(BaseTestCase):
 
     def test_search_has_drug(self):
         class_id = "N0000001242" # Fever
-        
-        rv = self.search(class_id)
+        symptom = "Fever"
+
+        rv = self.search(symptom)
 
         self.assertEqual(rv.status_code, 200)
         data = json.loads(rv.data)
