@@ -61,13 +61,16 @@ def add():
         notifications = data["notifications"]
         temporary = data["temporary"]
         alert_user = data["alert_user"]
+        refill = data["refill"]
     except KeyError as err:
         raise MissingDataError(err)
 
     med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
     return jsonify(message="ok", 
         conflicts=meds.conflict.check(), 
-        allergy_conflicts=meds.allergy.check(med_id))
+        allergy_conflicts=meds.allergy.check(med_id),
+        banned_leagues=meds.db.check_leagues(cui, name))
+
 
 @blueprint.route('/for-user', methods = ['GET'])
 @auth.required
@@ -120,14 +123,14 @@ def delete():
 @auth.required
 def picture():
 
-    bad_words = open("/home/ubuntu/flaskapp/bad_words.txt", "r")
+    bad_words = open("flaskapp/bad_words.txt", "r")
     bad_words_list = bad_words.read().split(',')
 
     data = request.get_json()
     picture_data = data["photo"]
     image_data = bytes(picture_data, encoding="ascii")
     file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
-    file_name = "/var/www/html/flaskapp/static/img/" + file_name_o
+    file_name = "flaskapp/static/img/" + file_name_o
 
     with open(file_name,"wb") as f:
         f.write(decodestring(image_data))

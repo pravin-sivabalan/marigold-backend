@@ -261,5 +261,21 @@ def delete(med_id):
 
     conn.commit()
 
+get_user_leagues = """ SELECT league FROM users WHERE id = %s """
+
+def check_leagues(cui, name):
+    conn = db.conn()
+    cursor = conn.cursor()
+    leagues = cursor.execute(get_user_leagues, [auth.uid()])
+    leagues = cursor.fetchall()
+
+    if leagues[0][0] == "":
+        return ""
+    else:
+        banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
+        cursor.execute(banned_cmd, [name.split(' ',1)[0]])
+        return cursor.fetchall()
+
+
 
 

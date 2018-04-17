@@ -4,6 +4,7 @@ import time, datetime
 from dateutil import parser
 import json
 
+
 class MedsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -21,6 +22,9 @@ class MedsTestCase(BaseTestCase):
     def get_meds(self):
         return self.auth_get('/meds/for-user')
 
+    def pic(self, picture):
+        return self.auth_post('/meds/pic',dict(photo=picture))
+
     def autoadd_med(self, med_name, **kwargs):
         rv = self.lookup_med(med_name)
 
@@ -37,7 +41,8 @@ class MedsTestCase(BaseTestCase):
             quantity = kwargs.get("quantity") or 10,
             notifications = notifications,
             temporary = kwargs.get("temporary") or False,
-            alert_user = kwargs.get("alert_user") or False
+            alert_user = kwargs.get("alert_user") or False,
+            refill = True 
         )
 
         self.assertEqual(rv.status_code, 200)
@@ -72,8 +77,10 @@ class MedsTestCase(BaseTestCase):
                 { "day": 2, "time": "2018-01-01:05:00:00" }
             ],
             temporary = True,
-            alert_user = True
+            alert_user = True,
+            refill = True
         )
+
 
         self.assertEqual(rv.status_code, 200)
         data = json.loads(rv.data)
@@ -124,6 +131,7 @@ class MedsTestCase(BaseTestCase):
             ],
             temporary = False,
             alert_user = False,
+            refill = True
         )
 
         rv = self.get_meds()
@@ -211,9 +219,6 @@ class MedsTestCase(BaseTestCase):
 
         self.assertEqual(1,update_med_temporary)
 
-
-
-
     def test_run_out_1(self):
 
         quantity = 7
@@ -231,7 +236,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 6) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 13) 
 
 
         run_out = parser.parse(run_out_date)
@@ -253,7 +258,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 67) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 88) 
 
 
         run_out = parser.parse(run_out_date)
@@ -275,7 +280,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 18) 
 
 
         run_out = parser.parse(run_out_date)
@@ -294,7 +299,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 21) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 35) 
 
 
         run_out = parser.parse(run_out_date)
@@ -317,7 +322,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 4) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
 
 
         run_out = parser.parse(run_out_date)
@@ -359,7 +364,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 18) 
 
 
         run_out = parser.parse(run_out_date)
@@ -380,7 +385,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 26) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 40) 
 
 
         run_out = parser.parse(run_out_date)
@@ -405,7 +410,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 16) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 29) 
 
 
         run_out = parser.parse(run_out_date)
@@ -425,7 +430,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 14) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 22) 
 
 
         run_out = parser.parse(run_out_date)
@@ -471,3 +476,53 @@ class MedsTestCase(BaseTestCase):
 
         drugs = data["drugs"]
         self.assertIn("Advil", drugs)
+
+    def test_pic_lookup_1(self):
+        with open("tests/1.txt", "r") as file:
+            rv = self.pic(file.read())
+            data = json.loads(rv.data)
+
+            self.assertEqual(rv.status_code, 200)
+
+            match = data["message"]
+            self.assertEqual(match, "Could not read label successfully.")
+
+    def test_pic_lookup_2(self):
+        with open("tests/2.txt", "r") as file:
+            rv = self.pic(file.read())
+            data = json.loads(rv.data)
+
+            self.assertEqual(rv.status_code, 200)
+
+            match = data["message"]
+            self.assertEqual(match, "Could not read label successfully.")
+
+    def test_pic_lookup_3(self):
+        with open("tests/3.txt", "r") as file:
+            rv = self.pic(file.read())
+            data = json.loads(rv.data)
+
+            self.assertEqual(rv.status_code, 200)
+
+            match = data["matches"]
+            self.assertEqual(data["message"], "ok")
+           
+    def test_pic_lookup_4(self):
+        with open("tests/4.txt", "r") as file:
+            rv = self.pic(file.read())
+            data = json.loads(rv.data)
+
+            self.assertEqual(rv.status_code, 200)
+
+            match = data["matches"]
+            self.assertEqual(data["message"], "ok")
+
+    def test_pic_lookup_5(self):
+        with open("tests/5.txt", "r") as file:
+            rv = self.pic(file.read())
+            data = json.loads(rv.data)
+
+            self.assertEqual(rv.status_code, 200)
+
+            match = data["matches"]
+            self.assertEqual(data["message"], "ok")
