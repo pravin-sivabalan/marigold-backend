@@ -82,6 +82,9 @@ def with_list(cuis):
                 cui = concepts[1].get("rxcui")
             )
 
+            if drug1.cui == drug2.cui:
+                continue
+
             pairs = typ.get("interactionPair")
             for pair in pairs:
                 interactions.append(
