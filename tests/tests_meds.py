@@ -25,6 +25,7 @@ class MedsTestCase(BaseTestCase):
     def pic(self, picture):
         return self.auth_post('/meds/pic',dict(photo=picture))
 
+
     def autoadd_med(self, med_name, **kwargs):
         rv = self.lookup_med(med_name)
 
@@ -491,7 +492,6 @@ class MedsTestCase(BaseTestCase):
         with open("tests/2.txt", "r") as file:
             rv = self.pic(file.read())
             data = json.loads(rv.data)
-
             self.assertEqual(rv.status_code, 200)
 
             match = data["message"]
@@ -501,7 +501,6 @@ class MedsTestCase(BaseTestCase):
         with open("tests/3.txt", "r") as file:
             rv = self.pic(file.read())
             data = json.loads(rv.data)
-
             self.assertEqual(rv.status_code, 200)
 
             match = data["matches"]
@@ -511,7 +510,6 @@ class MedsTestCase(BaseTestCase):
         with open("tests/4.txt", "r") as file:
             rv = self.pic(file.read())
             data = json.loads(rv.data)
-
             self.assertEqual(rv.status_code, 200)
 
             match = data["matches"]
@@ -521,8 +519,45 @@ class MedsTestCase(BaseTestCase):
         with open("tests/5.txt", "r") as file:
             rv = self.pic(file.read())
             data = json.loads(rv.data)
-
             self.assertEqual(rv.status_code, 200)
 
             match = data["matches"]
             self.assertEqual(data["message"], "ok")
+
+
+    def test_league_1(self):
+        self.autoadd_med("Timolo")
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        meds = data["meds"]
+        meds = json.dumps(meds)
+
+        self.assertIn("nba,ncaa", meds)
+    
+    def test_league_2(self):
+        self.autoadd_med("Adderall")
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        meds = data["meds"]
+        meds = json.dumps(meds)
+
+        self.assertIn("nfl,ncaa", meds)
+
+    def test_league_3(self):
+        self.autoadd_med("Advil")
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        meds = data["meds"]
+        meds = json.dumps(meds)
+
+        self.assertIn("", meds)
+
+    def test_league_4(self):
+        self.autoadd_med("Danzol")
+        rv = self.get_meds()
+        data = json.loads(rv.data)
+        meds = data["meds"]
+        meds = json.dumps(meds)
+
+        self.assertIn("nfl,nba,ncaa", meds)
+

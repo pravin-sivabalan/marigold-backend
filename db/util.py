@@ -104,8 +104,7 @@ tables_to_clear = [
     "users",
     "user_meds",
     "meds",
-    "notifications",
-    "banned"
+    "notifications"
 ] 
 
 def clear():
