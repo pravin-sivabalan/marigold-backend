@@ -41,7 +41,6 @@ def lookup():
 @auth.required
 def search():
     data = request.get_json()
-        
     try:
         class_id = data["class_id"]
     except KeyError as err:
@@ -68,7 +67,7 @@ def add():
 
     med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
     return jsonify(message="ok", 
-        conflicts=meds.conflict.check(), 
+        conflicts=meds.conflict.check_with_id(med_id), 
         allergy_conflicts=meds.allergy.check(med_id),
         banned_leagues=meds.db.check_leagues(cui, name))
 
@@ -84,6 +83,13 @@ def for_user():
 def conflicts():
     return jsonify(message="ok", 
         conflicts=meds.conflict.check())
+
+@blueprint.route('/conflicts-with/<cui>', methods = ['GET'])
+@auth.required
+def conflicts_with(cui):
+    return jsonify(message="ok",
+        conflicts=meds.conflict.check_with(cui),
+        allergy_conflicts=meds.allergy.check_with(cui))
 
 @blueprint.route('/refill', methods = ['POST'])
 @auth.required
