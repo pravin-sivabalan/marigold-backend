@@ -111,7 +111,19 @@ def register_submit():
 def dashboard():
 	if 'login' in session:
 		user_id = session['login']
-		return render_template('dashboard.html', user_id=user_id)
+		user_meds = users.db.get_web_meds(user_id)
+		return render_template('dashboard.html', user_id=user_id, meds = user_meds)
 	else:
 		return redirect(url_for('web.index'))
+
+
+@blueprint.route('/detailed/<med_id>')
+def detailed(med_id):
+	if 'login' in session:
+		user_id = session['login']
+		return render_template('detailed.html', med_id=med_id)
+	else:
+		return redirect(url_for('web.index'))
+
+
     

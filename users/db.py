@@ -243,6 +243,16 @@ def get_side_effects(uid):
     side_effects = cursor.fetchall()
     return side_effects
 
+web_meds = """ SELECT name, id FROM marigold.user_meds WHERE user_id = %s """
+
+def get_web_meds(uid):
+    conn = db.conn()
+    cursor = conn.cursor()
+    cursor.execute(web_meds, [uid])
+    meds = cursor.fetchall()
+    return meds
+
+
 
 
 
