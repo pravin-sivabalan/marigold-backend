@@ -135,7 +135,7 @@ def find_user(uid, custom_query=find_user_with_id):
 
 def user_profile(uid):
     return find_user(uid, """
-        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone, refill FROM users
+        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone FROM users
         WHERE id = %s
     """)
 
@@ -242,6 +242,16 @@ def get_side_effects(uid):
     side_effects = cursor.execute(side_effects_cmd, [uid])
     side_effects = cursor.fetchall()
     return side_effects
+
+web_meds = """ SELECT name, id FROM marigold.user_meds WHERE user_id = %s """
+
+def get_web_meds(uid):
+    conn = db.conn()
+    cursor = conn.cursor()
+    cursor.execute(web_meds, [uid])
+    meds = cursor.fetchall()
+    return meds
+
 
 
 

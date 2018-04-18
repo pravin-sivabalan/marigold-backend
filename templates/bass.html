@@ -34,8 +34,12 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/web/login">Sign in</a></li>
-          <li><a href="/web/register">Sign up</a></li>
+          {% if user_id %}
+            <li><a href="/web/account/{{ user_id }}">Account</a></li>
+          {% else %}
+            <li><a href="/web/login">Sign in</a></li>
+            <li><a href="/web/register">Sign up</a></li>
+          {% endif %}
           <li><a href="/web/about">About</a></li>
         </ul>
       </div>
