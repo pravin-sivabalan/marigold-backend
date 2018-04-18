@@ -23,6 +23,23 @@ ingred_msg = "The '{}' ingredient in this medication conflicts with your '{}' al
 inactive_ingred_msg = "The '{}' inactive ingredient in this medication conflicts with your '{}' allergy"
 warning_label_msg = "The warning label for '{}' references your '{}' allergy"
 
+def check_all():
+    conflicts = []
+
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
+
+    cursor.execute("""
+        SELECT id FROM user_meds
+        WHERE user_id = %s
+    """, [auth.uid()])
+
+    meds = cursor.fetchall()
+    for med in meds:
+        conflicts += check(med["id"])
+
+    return conflicts
+
 def check(med_id):
     conflicts = []
 

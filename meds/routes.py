@@ -88,7 +88,8 @@ def for_user():
 @auth.required
 def conflicts():
     return jsonify(message="ok", 
-        conflicts=meds.conflict.check())
+        conflicts=meds.conflict.check(),
+        allergy_conflicts=meds.allergy.check_all())
 
 @blueprint.route('/conflicts-with/<cui>', methods = ['GET'])
 @auth.required
