@@ -71,7 +71,7 @@ def add():
     except KeyError as err:
         raise MissingDataError(err)
 
-    med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user)
+    med_id = meds.db.add(name, cui, quantity, notifications, temporary, alert_user, refill)
     return jsonify(message="ok", 
         conflicts=meds.conflict.check_with_id(med_id), 
         allergy_conflicts=meds.allergy.check(med_id),
@@ -91,12 +91,13 @@ def conflicts():
         conflicts=meds.conflict.check(),
         allergy_conflicts=meds.allergy.check_all())
 
-@blueprint.route('/conflicts-with/<cui>', methods = ['GET'])
+@blueprint.route('/conflicts-with/<cui>/<name>', methods = ['GET'])
 @auth.required
-def conflicts_with(cui):
+def conflicts_with(cui, name):
     return jsonify(message="ok",
         conflicts=meds.conflict.check_with(cui),
-        allergy_conflicts=meds.allergy.check_with(cui))
+        allergy_conflicts=meds.allergy.check_with(cui),
+        leagues = meds.db.get_leagues_banned_in(name))
 
 @blueprint.route('/refill', methods = ['POST'])
 @auth.required

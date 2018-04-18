@@ -99,8 +99,6 @@ def insert_drug(num,results):
 
     add_cmd = """ INSERT INTO meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
 
-    print(add_cmd)
-
     conn = db.conn()
     cursor = conn.cursor()
     cursor.execute(add_cmd)

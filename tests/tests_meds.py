@@ -238,7 +238,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 13) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
 
 
         run_out = parser.parse(run_out_date)
@@ -260,7 +260,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 88) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 87) 
 
 
         run_out = parser.parse(run_out_date)
@@ -282,7 +282,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 18) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
 
 
         run_out = parser.parse(run_out_date)
@@ -301,7 +301,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 35) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 34) 
 
 
         run_out = parser.parse(run_out_date)
@@ -324,7 +324,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 10) 
 
 
         run_out = parser.parse(run_out_date)
@@ -366,7 +366,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 18) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
 
 
         run_out = parser.parse(run_out_date)
@@ -387,7 +387,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 40) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 39) 
 
 
         run_out = parser.parse(run_out_date)
@@ -412,7 +412,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 29) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 28) 
 
 
         run_out = parser.parse(run_out_date)
@@ -432,7 +432,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 22) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 21) 
 
 
         run_out = parser.parse(run_out_date)
@@ -563,4 +563,47 @@ class MedsTestCase(BaseTestCase):
         meds = json.dumps(meds)
 
         self.assertIn("nfl,nba,ncaa", meds)
+
+    def test_side_effects_1(self):
+        with open("tests/effects1.txt", "r") as file:
+            self.autoadd_med("Timolol 10 MG Oral Tablet")
+            rv = self.get_meds()
+            data = json.loads(rv.data)
+            meds = json.dumps(data["meds"])
+            fileR = file.read()
+
+            self.assertIn(meds[:100], fileR)
+
+
+    def test_side_effects_2(self):
+        with open("tests/effects2.txt", "r") as file:
+            self.autoadd_med("Nuvigil")
+            rv = self.get_meds()
+            data = json.loads(rv.data)
+            meds = json.dumps(data["meds"])
+            fileR = file.read()
+
+            self.assertIn(meds[:100], fileR)
+
+
+
+    def test_side_effects_3(self):
+        with open("tests/effects3.txt", "r") as file:
+            self.autoadd_med("Adderall")
+            rv = self.get_meds()
+            data = json.loads(rv.data)
+            meds = json.dumps(data["meds"])
+            fileR = file.read()
+
+            self.assertIn(meds[:100], fileR)
+
+    def test_side_effects_4(self):
+        with open("tests/effects4.txt", "r") as file:
+            self.autoadd_med("Claritin")
+            rv = self.get_meds()
+            data = json.loads(rv.data)
+            meds = json.dumps(data["meds"])
+            fileR = file.read()
+
+            self.assertIn(meds[:100], fileR)
 

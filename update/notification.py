@@ -52,6 +52,50 @@ def mail(email,medication_name, user_name):
         return e.response['Error']['Message'];
 
 
+def mail_reminder(email,medication_name, user_name):
+    SENDER = "Marigold <mailer@marigoldapp.net>"
+    RECIPIENT = email;
+    AWS_REGION = "us-east-1";
+    SUBJECT = "Medication Reminder"
+    BODY_TEXT = ("MariGold medication reminder\r\n"
+            
+            )
+
+
+    BODY_HTML = """<html><head><img height="100" src="https://s3.amazonaws.com/marigoldapp/MariGoldLogo.png"></head>
+    <body><h2 style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>""" + medication_name + """ is about to run out.</h2>
+        <p style='font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif'>Hello """ + user_name + """,  """ + medication_name+ """ is about to run out. This is your reminder to refill your medication.</p>
+    </body>
+    </html>"""
+    CHARSET = "UTF-8"
+    client = boto3.client('ses',region_name=AWS_REGION)
+    try:
+        response = client.send_email(
+        Destination={
+            'ToAddresses': [
+                RECIPIENT,
+            ],
+        },
+        Message={
+            'Body': {
+                'Html': {
+                    'Charset': CHARSET,
+                    'Data': BODY_HTML,
+                },
+                'Text': {
+                    'Charset': CHARSET,
+                    'Data': BODY_TEXT,
+                },
+            },
+            'Subject': {
+                'Charset': CHARSET,
+                'Data': SUBJECT,
+            },
+        },
+        Source=SENDER,
+    )
+    except ClientError as e:
+        return e.response['Error']['Message'];
 
 
 
@@ -123,6 +167,32 @@ for row in data :
 
 
 
+
+refill_notification = """ SELECT * FROM marigold.user_meds WHERE refill = 1 """
+
+cursor.execute(refill_notification)
+conn.commit()
+
+data = cursor.fetchall()
+
+for row in data:
+    user_id = row[1]
+    name = row[3]
+    run_out_date = row[5]
+    first_name, last_name, email = get_user_name(user_id)
+    user_name = first_name + " " + last_name
+
+
+    now_time = datetime.datetime.now() + datetime.timedelta(minutes = 60)
+    upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 57.6) 
+    lower_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4)
+    run_out_date = run_out_date + datetime.timedelta(minutes = 60)
+
+    if run_out_date.weekday() == datetime.datetime.today().weekday() and run_out_date.time() < lower_bound_time.time() and run_out_date.time() > upper_bound_time.time():
+        mail_reminder(email, name, user_name)
+        print("mail")
+    else:
+        print(upper_bound_time.time(), run_out_date.time(), lower_bound_time.time())
 
 
 
