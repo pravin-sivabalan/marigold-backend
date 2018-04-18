@@ -86,6 +86,9 @@ def check_med(med):
     related_meds = rx.norm.related_by_types(cui, ["IN"])
     for related_med in related_meds:
         for allergy in allergies:
+            if allergy.strip() == "":
+                continue
+
             if allergy.lower() in related_med.name.lower():
                 conflicts.append(dict(
                     drug = med_id,
@@ -101,6 +104,9 @@ def check_med(med):
 
         for ingred in inactive_ingreds:
             for allergy in allergies:
+                if allergy.strip() == "":
+                    continue
+
                 if allergy.lower() in ingred.lower():
                     conflicts.append(dict(
                         drug = med_id,
@@ -115,6 +121,9 @@ def check_med(med):
         warning_label = warning_label.lower()
         
         for allergy in allergies:
+            if allergy.strip() == "":
+                continue
+
             if allergy.lower() in warning_label:
                 conflicts.append(dict(
                     drug = med_id,
