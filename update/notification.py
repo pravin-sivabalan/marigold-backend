@@ -186,7 +186,7 @@ for row in data:
     now_time = datetime.datetime.now() + datetime.timedelta(minutes = 60)
     upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 57.6) 
     lower_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4)
-    run_out_date = run_out_date + datetime.timedelta(minutes = 60)
+    run_out_date = run_out_date #+ datetime.timedelta(minutes = 60)
 
     if run_out_date.weekday() == datetime.datetime.today().weekday() and run_out_date.time() < lower_bound_time.time() and run_out_date.time() > upper_bound_time.time():
         mail_reminder(email, name, user_name)
