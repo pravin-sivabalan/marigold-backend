@@ -166,7 +166,7 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
 
     if alert_user:
         for notif in notifications:
-            print(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
+            #print(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
             notification.db.add(medication_notification_id, notif.day, notif.time, run_out_date.strftime('%Y-%m-%d %H:%M:%S'))
 
     return get_id[0][0]
@@ -189,7 +189,14 @@ def get_drug_side_effects(rxcui):
 
     cursor.execute(get_side_effects_command, [rxcui])
     side_effects_return = cursor.fetchall()
-    return side_effects_return[0][0]
+
+    try:
+        return (((side_effects_return[0][0]).replace("\\", "")).replace(")", "")).replace("(", "")
+    except:
+        if not side_effects_return:
+            return
+        else:
+            return side_effects_return
 
 def for_user():
     conn = db.conn()
@@ -210,7 +217,7 @@ def for_user():
         del row["id"]
         user_med.update(row)
 
-    print(users_meds)
+
     return users_meds
 
 def refill(med_id):

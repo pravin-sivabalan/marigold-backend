@@ -39,7 +39,7 @@ tables["user_meds"] = """
   `refill` int(11) DEFAULT NULL,
   `possible_side_effects` mediumtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=452 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 """
 
 tables["meds"] = """
@@ -58,8 +58,9 @@ tables["meds"] = """
   `route` mediumtext,
   `warnings_and_cautions` mediumtext,
   `banned` mediumtext,
+  `possible_side_effects` mediumtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
 """
 
 tables["notifications"] = """

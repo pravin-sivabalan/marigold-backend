@@ -86,6 +86,5 @@ def delete_user(email):
 @auth.required
 def get_side_effects():
     side_effects = users.db.get_side_effects(auth.uid())
-    print(side_effects)
 
     return jsonify(side_effects=side_effects)
