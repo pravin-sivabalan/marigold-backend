@@ -125,5 +125,22 @@ def detailed(med_id):
 	else:
 		return redirect(url_for('web.index'))
 
+def listify(list_str):
+    items = [item.strip() for item in list_str.split(",")]
+    items = [item for item in items if item != ""]
+
+    return items
+
+@blueprint.route('/account/<id>')
+def account(id):
+    if 'login' in session:
+            user_id = session['login']
+            user = users.db.find_user(user_id)
+
+            return render_template('account_detailed.html', user=user, 
+                allergies = listify(user["allergies"]),
+                leagues = listify(user["league"]))
+    else:
+            return redirect(url_for('web.index'))
 
     
