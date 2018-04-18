@@ -218,8 +218,7 @@ update_password_sql = """
 """
 
 def update_password(id, password):
-    print(id)
-    print(password)
+
 
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
