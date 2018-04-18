@@ -80,3 +80,12 @@ def user_change_password():
 @blueprint.route('/delete-user/<email>')
 def delete_user(email):
     return em.delete_account_email(email)
+
+
+@blueprint.route('/get_user_side_effects', methods = ['POST'])
+@auth.required
+def get_side_effects():
+    side_effects = users.db.get_side_effects(auth.uid())
+    print(side_effects)
+
+    return jsonify(side_effects=side_effects)

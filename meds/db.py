@@ -210,7 +210,7 @@ def for_user():
         del row["id"]
         user_med.update(row)
 
-
+    print(users_meds)
     return users_meds
 
 def refill(med_id):
@@ -286,6 +286,10 @@ def check_leagues(cui, name):
         banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
         cursor.execute(banned_cmd, [name.split(' ',1)[0]])
         return cursor.fetchall()
+
+
+
+        
 
 
 
