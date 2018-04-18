@@ -135,7 +135,7 @@ def find_user(uid, custom_query=find_user_with_id):
 
 def user_profile(uid):
     return find_user(uid, """
-        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone, refill FROM users
+        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone FROM users
         WHERE id = %s
     """)
 
