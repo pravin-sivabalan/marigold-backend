@@ -195,5 +195,24 @@ class UserTestCase(BaseTestCase):
 
         user = cursor.fetchall()[0]
         self.assertEqual(user["pharmacy_address"], "360 Cap. Tex Highway")
+
+
+
+    def test_web_login_1(self):
+        rv = self.app.get('/web/login/submit?email=wborland@purdue.edu&password=password')
+        self.assertEqual(rv.status_code, 200)
+
+    def test_web_login_2(self):
+        rv = self.app.get('/web/login/submit?email=abc@abc.com&password=abc')
+        self.assertEqual(rv.status_code, 200)
+
+    def test_web_register_1(self):
+        rv = self.app.get('/web/register/submit?email=abc@abc.com&password=abc&cpassword=password')
+        self.assertNotEqual(rv.status_code, 200)
+
+    def test_web_register_2(self):
+        rv = self.app.get('/web/login/submit?email=wborland@purdue.edu&password=password&cpassword=password')
+        self.assertEqual(rv.status_code, 200)
+        
     
         

@@ -10,7 +10,7 @@ last_field = 2
 email_field = 3
 passwd_field = 4
 
-class UserNotFound(Error):
+class prNotFound(Error):
     """Could not find user"""
     status_code = 400
     error_code = 20
@@ -42,12 +42,14 @@ def check_creds(user, passwd):
 
     found = cursor.execute(find_users_with_email, [user])
     if found == 0:
+        print("Could not find|" + user + "|" )
         raise UserNotFound()
 
     user = cursor.fetchall()[0]
 
     hashed_passwd = auth.calc_hash(passwd)
     if user[passwd_field] != hashed_passwd:
+        print("Incalid Pass|" + password + "|" )
         raise InvalidPassword()
 
     return user[id_field]
@@ -240,6 +242,16 @@ def get_side_effects(uid):
     side_effects = cursor.execute(side_effects_cmd, [uid])
     side_effects = cursor.fetchall()
     return side_effects
+
+web_meds = """ SELECT name, id FROM marigold.user_meds WHERE user_id = %s """
+
+def get_web_meds(uid):
+    conn = db.conn()
+    cursor = conn.cursor()
+    cursor.execute(web_meds, [uid])
+    meds = cursor.fetchall()
+    return meds
+
 
 
 

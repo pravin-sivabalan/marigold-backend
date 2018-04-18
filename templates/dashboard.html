@@ -1,0 +1,29 @@
+{% extends "bass.html" %}
+{% block content %}
+  
+
+  <div class="container">
+    <h1 class="marigold-orange text-center">Dashboard</h1>
+  </div>
+
+  <div class="container">
+    <div class="col-xs-6">
+      <h3>Your Medications</h3>
+        <table class="table">
+          {% for key in meds %}
+            <tr><td><a href="detailed/{{ key[1] }}">{{ key[0] }}</a></td></tr>
+          {% endfor %}
+        </table>
+    </div>
+
+
+    <div class="col-xs-6">
+      
+    </div>
+  </div>
+
+
+  
+
+{% endblock %}
+

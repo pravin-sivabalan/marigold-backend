@@ -60,6 +60,17 @@ footer{
   font-family: 'Palanquin', sans-serif;
 }
 
+.btn-small {
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 18px;
+  background: #FF7000;
+  padding: 5px 10px 5px 10px;
+  font-family: 'Palanquin', sans-serif;
+}
+
 .btn:hover {
   background: #F46C00;
   text-decoration: none;
@@ -67,6 +78,14 @@ footer{
 
 .top {
     margin-top: 2em;
+}
+
+#check {
+  margin-right: : 1px;
+}
+
+#check label {
+  margin-right: 3em;
 }
 
 
