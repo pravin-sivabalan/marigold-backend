@@ -8,7 +8,9 @@
 
 <div class="container text-center top">
 	<h1 class="marigold-orange">Register</h1>
+  <h3 class="marigold-orange">{{ error }}</h3>
 </div>
+
 
 
 <div class="container">
@@ -16,44 +18,79 @@
 <form action="{{ url_for('web.register_submit') }}" method="post" >
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+      <input type="email" class="form-control" name="email" placeholder="Enter email" required>
   </div>
 
   <div class="form-group row">
   	<div class="col-xs-6">
-    		<label for="first">First Name</label>
+    	<label for="first">First Name</label>
     		<input type="text" class="form-control" id="first" placeholder="First Name" name="first" required>
     </div>
     <div class="col-xs-6">
-    		<label for="last">Last Name</label>
-    		<input type="text" class="form-control" id="last" placeholder="Lirst Name" name="last" required>
+    	<label for="last">Last Name</label>
+    		<input type="text" class="form-control" id="last" placeholder="Last Name" name="last" required>
     </div>
   </div>
 
   <div class="form-group row">
   	<div class="col-xs-6">
-    		<label for="password">Password</label>
+    	<label for="password">Password</label>
     		<input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
     </div>
 
     <div class="col-xs-6">
-    		<label for="cpassword">Confirm Password</label>
+    	<label for="cpassword">Confirm Password</label>
     		<input type="password" class="form-control" id="cpassword" placeholder="Confirm Password" name="cpassword" required>
     </div>
 
   </div>
 
-  <div style="display: none" class="text-center form-group row" id="pass_show">
-    	<h3 class="marigold-orange">Passwords do not match.</h3>
+  <div class="form-group row">
+    <div class="col-xs-6">
+      <label for="pname">Pharmacy Name</label>
+        <input type="text" class="form-control" id="pname" placeholder="Pharmacy Name" name="pname">
+    </div>
+
+    <div class="col-xs-6">
+      <label for="paddress">Pharmacy Address</label>
+        <input type="text" class="form-control" id="paddress" placeholder="Pharmacy Address" name="paddress">
+      </div>
   </div>
+  
+  <div class="form-group row">
+    <div class="col-xs-4">
+      <label for="pphone">Pharmacy Phone</label>
+        <input type="text" class="form-control" id="pphone" placeholder="Pharmacy Phone" name="pphone">
+    </div>
 
+    <div class=" col-xs-4">
+      <label for="allergies">Allergies</label>
+        <input type="text" class="form-control" id="allergies" placeholder="Allergies" name="allergies">
+    </div>
 
+    <div class="col-xs-4 form-inline" id="check">
+      <label>Leagues</label>
+      <br>
+      <input class="form-check-input" type="checkbox" value="" id="NFL" name="NFL"/>
+        <label class="form-check-label" for="NFL">NFL</label>
+      <input class="form-check-input" type="checkbox" value="" id="NBA" name="NBA"/>
+        <label class="form-check-label" for="NBA">NBA</label>
+      <input class="form-check-input" type="checkbox" value="" id="NCAA" name="NCAA"/>
+        <label class="form-check-label" for="NCAA">NCAA</label>
+    </div>
+  </div>
+  <br>
+
+  <div style="display: none" class="text-center form-group row" id="pass_show">
+    <h3 class="marigold-orange">Passwords do not match.</h3>
+  </div>
 
   <div class="text-center">
   	<button type="submit" class="btn" id="button">Register</button>
   </div>
 </form>
 </div>
+<br>
 
 <script type="text/javascript">
 $('button').on ('click', function () {

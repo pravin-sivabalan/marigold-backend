@@ -10,7 +10,7 @@ last_field = 2
 email_field = 3
 passwd_field = 4
 
-class UserNotFound(Error):
+class prNotFound(Error):
     """Could not find user"""
     status_code = 400
     error_code = 20
@@ -42,12 +42,14 @@ def check_creds(user, passwd):
 
     found = cursor.execute(find_users_with_email, [user])
     if found == 0:
+        print("Could not find|" + user + "|" )
         raise UserNotFound()
 
     user = cursor.fetchall()[0]
 
     hashed_passwd = auth.calc_hash(passwd)
     if user[passwd_field] != hashed_passwd:
+        print("Incalid Pass|" + password + "|" )
         raise InvalidPassword()
 
     return user[id_field]
@@ -133,7 +135,7 @@ def find_user(uid, custom_query=find_user_with_id):
 
 def user_profile(uid):
     return find_user(uid, """
-        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone FROM users
+        SELECT first_name, last_name, email, league, allergies, pharmacy_name, pharmacy_address, pharmacy_phone, refill FROM users
         WHERE id = %s
     """)
 
