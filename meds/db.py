@@ -53,8 +53,8 @@ class InvalidNotification(Error):
         self.notification = notification
 
 add_cmd = """
-    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id, banned, possible_side_effects)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id, banned, possible_side_effects, refill)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 select_cmd = """
@@ -114,7 +114,7 @@ def get_leagues_banned_in(name):
 
     conn = db.conn()
     cursor = conn.cursor()
-    banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
+    banned_cmd = """SELECT league FROM banned WHERE name like %s"""
     cursor.execute(banned_cmd, [name.split(' ',1)[0]])
     leagues = cursor.fetchall()
     league_banned = ""
@@ -122,11 +122,13 @@ def get_leagues_banned_in(name):
     for l in leagues:
         league_banned += l[0] + ','
 
+    print(league_banned, "hello", name.split(' ',1)[0])
+
     return league_banned[:-1]
 
 
 
-def add(name, cui, quantity, notifications, temporary, alert_user):
+def add(name, cui, quantity, notifications, temporary, alert_user, refill):
     conn = db.conn()
     cursor = conn.cursor()
 
@@ -153,7 +155,7 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
 
     leagues_banned_in = get_leagues_banned_in(name)
 
-    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id, leagues_banned_in, side_effects])
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id, leagues_banned_in, side_effects, refill])
 
     cursor.execute("SELECT LAST_INSERT_ID();")
     get_id = cursor.fetchall()
