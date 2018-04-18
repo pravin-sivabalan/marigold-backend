@@ -233,7 +233,7 @@ def update_password(id, password):
 
     return
 
-side_effects_cmd = """ SELECT possible_side_effects FROM marigold.user_meds WHERE user_id = %s """
+side_effects_cmd = """ SELECT name, possible_side_effects FROM marigold.user_meds WHERE user_id = %s """
 
 def get_side_effects(uid):
     conn = db.conn()
