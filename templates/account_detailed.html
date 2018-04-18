@@ -1,0 +1,109 @@
+{% extends "bass.html" %}
+
+{% block content %}
+
+<div class="container text-center top">
+    <h1 class="marigold-orange">Account Information For {{ user.first_name }} {{ user.last_name }}</h1>
+    <h3 class="marigold-orange">{{ error }}</h3>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card card-listw">
+                <div class="card-header">
+                    <h3>General</h3>
+                </div>
+                <div class="card-body">
+                    <div class="card-field">
+                        <h4>First Name</h4>
+                        <p>{{ user.first_name }}</p>
+                    </div>
+                    <div class="card-hline"></div>
+                    <div class="card-field">
+                        <h4>Last Name</h4>
+                        <p>{{ user.last_name }}</p>
+                    </div>
+                    <div class="card-hline"></div>
+                    <div class="card-field">
+                        <h4>Email</h4>
+                        <p>{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card card-list">
+                <div class="card-header">
+                    <h3>Leagues</h3>
+                </div>
+                <div class="card-body">
+                    {% if leagues|length > 0 %}
+                        {% for league in leagues[:-1] %}
+                            <div class="card-field">
+                                <p>{{ league }}</p>
+                            </div>
+                            <div class="card-hline"></div>
+                        {% endfor %}
+                        <div class="card-field">
+                            <p>{{ leagues|last }}</p>
+                        </div>
+                    {% else %}
+                        <div class="card-field">
+                            <p>You have no allergies!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card card-list">
+                <div class="card-header">
+                    <h3>Allergies</h3>
+                </div>
+                <div class="card-body">
+                    {% if allergies|length > 0 %}
+                        {% for allergy in allergies[:-1] %}
+                            <div class="card-field">
+                                <p>{{ allergy }}</p>
+                            </div>
+                            <div class="card-hline"></div>
+                        {% endfor %}
+                        <div class="card-field">
+                            <p>{{ allergies|last }}</p>
+                        </div>
+                    {% else %}
+                        <div class="card-field">
+                            <p>You have no allergies!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Pharmacy</h3>
+                </div>
+                <div class="card-body">
+                    <div class="card-field">
+                        <h4>Name</h4>
+                        <p>{{ user.pharmacy_name }}</p>
+                    </div>
+                    <div class="card-hline"></div>
+                    <div class="card-field">
+                        <h4>Address</h4>
+                        <p>{{ user.pharmacy_address }}</p>
+                    </div>
+                    <div class="card-hline"></div>
+                    <div class="card-field">
+                        <h4>Phone Number</h4>
+                        <a href="tel:{{ user.pharmacy_phone }}">{{ user.pharmacy_phone }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

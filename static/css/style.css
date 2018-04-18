@@ -89,5 +89,69 @@ footer{
 }
 
 
+/* Account Related Style */
+.card {
+    margin: 3rem;
+    border: 2px solid #e7e7e7;
+    border-radius: 10px;
 
+    box-shadow: 0 5px 4px 0 #bcbcbc;
 
+    height: 100%;
+}
+
+.card > * {
+    padding: 1rem;
+}
+
+.card-header {
+    text-align: center;
+    padding: 2rem 1rem;
+
+    background: #FF7000;
+    color: white;
+    
+    font-style: italic;
+
+    border-radius: 10px 10px 0 0; /* Hack */
+}
+
+.card-header h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.card-body {
+    padding: 0;
+}
+
+.card-field {
+    margin: 2rem 0;
+}
+
+.card-field h4 {
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.card-field a, .card-field p {
+    display: block;
+
+    color: #333;
+
+    text-align: center;
+}
+
+.card-hline {
+    margin: 0;
+    padding: 1px;
+
+    background: #e7e7e7;
+}
+
+.card-list p {
+    text-align: left;
+    font-size: 1.15em;
+
+    padding: 0 1rem;
+}
