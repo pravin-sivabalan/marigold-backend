@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, send_from_directory
 import click
 
 import subprocess
-
+import os
 import users.routes
 import meds.routes
 import update.routes
 import notification.routes
+import web.routes
 
 import db
 import db.util
@@ -22,6 +23,7 @@ app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 app.register_blueprint(update.routes.blueprint, url_prefix='/update')
 app.register_blueprint(notification.routes.blueprint, url_prefix='/notification')
+app.register_blueprint(web.routes.blueprint, url_prefix='/web')
 
 @app.errorhandler(Error)
 def handle_error(error):
@@ -31,6 +33,10 @@ def handle_error(error):
 @app.route('/')
 def hello_world():
 	return render_template('index.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon1.ico')
 
 @app.route('/update/git', methods = ['GET', 'POST'])
 def update():

@@ -1,0 +1,76 @@
+
+
+
+{% extends "bass.html" %}
+{% block content %}
+
+
+
+<div class="container text-center top">
+	<h1 class="marigold-orange">Register</h1>
+</div>
+
+
+<div class="container">
+
+<form action="{{ url_for('web.register_submit') }}" method="post" >
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" name="email" placeholder="Enter email" required>
+  </div>
+
+  <div class="form-group row">
+  	<div class="col-xs-6">
+    		<label for="first">First Name</label>
+    		<input type="text" class="form-control" id="first" placeholder="First Name" name="first" required>
+    </div>
+    <div class="col-xs-6">
+    		<label for="last">Last Name</label>
+    		<input type="text" class="form-control" id="last" placeholder="Lirst Name" name="last" required>
+    </div>
+  </div>
+
+  <div class="form-group row">
+  	<div class="col-xs-6">
+    		<label for="password">Password</label>
+    		<input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
+    </div>
+
+    <div class="col-xs-6">
+    		<label for="cpassword">Confirm Password</label>
+    		<input type="password" class="form-control" id="cpassword" placeholder="Confirm Password" name="cpassword" required>
+    </div>
+
+  </div>
+
+  <div style="display: none" class="text-center form-group row" id="pass_show">
+    	<h3 class="marigold-orange">Passwords do not match.</h3>
+  </div>
+
+
+
+  <div class="text-center">
+  	<button type="submit" class="btn" id="button">Register</button>
+  </div>
+</form>
+</div>
+
+<script type="text/javascript">
+$('button').on ('click', function () {
+if ($('#password').val() === $('#cpassword').val()) {
+	var x = document.getElementById("pass_show");
+	x.style.display = "none";
+	return true;
+}
+else {
+	 var x = document.getElementById("pass_show");
+	 x.style.display = "block";
+	 return false;
+}
+})
+</script>
+
+
+{% endblock %}
+
+

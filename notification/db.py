@@ -15,7 +15,7 @@ def add(medication_id, day_to_take, time_to_take, run_out_date):
 
     #print(add_cmd % (auth.uid(), medication_id, day_to_take, time_to_take, run_out_date))
 
-    if time_to_take.hour >= 0 and time_to_take.hour <= 5:
+    if time_to_take.hour >= 0 and time_to_take.hour <= 3:
         if day_to_take == 6:
             day_to_take = 0
         else:

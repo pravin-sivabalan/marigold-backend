@@ -59,6 +59,11 @@ def insert_drug(num,results):
     if results.get('indications_and_usage') != None:
         output['indications_and_usage'] = (results.get('indications_and_usage'))[0]
 
+    if results.get('warnings_and_cautions') != None:
+        output['possible_side_effects'] = (((results.get('warnings_and_cautions'))[0]).replace("\\", "")).replace("\"", "")
+    elif results.get('warnings') != None:
+        output['possible_side_effects'] = (((results.get('warnings'))[0]).replace("\\", "")).replace("\"", "")
+
     if results.get('openfda') != None:
         openfda = results.get('openfda')
 
@@ -82,6 +87,9 @@ def insert_drug(num,results):
             output['banned'] = league_banned[:-1]
 
     for x in output:
+        x.replace("\\", "")
+        x.replace("\"", "")
+        x.replace("\'", "")
         insert_cols += x + ","
         insert_vals += "\"" + output[x].encode("ascii", errors="ignore").decode() + "\" , "
 
@@ -90,6 +98,8 @@ def insert_drug(num,results):
     insert_vals = insert_vals[:-2]
 
     add_cmd = """ INSERT INTO meds (""" + insert_cols + """) VALUES (""" + insert_vals + """);"""
+
+    print(add_cmd)
 
     conn = db.conn()
     cursor = conn.cursor()

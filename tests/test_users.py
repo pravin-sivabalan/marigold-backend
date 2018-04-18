@@ -12,7 +12,10 @@ class UserTestCase(BaseTestCase):
             first_name="Test",
             last_name="User",
             email="abc@abc.com",
-            password="123"
+            password="123",
+            pharmacy_name = "HEB",
+            pharmacy_number = "123-456-1210",
+            pharmacy_address = "360 Cap. Tex"
         ))
 
         self.assertEqual(rv.status_code, 200)
@@ -62,7 +65,10 @@ class UserTestCase(BaseTestCase):
             last_name="Man",
             email="abc@abc.com",
             password="123",
-            league="NFL, NBA"
+            league="NFL, NBA",
+            pharmacy_name = "a",
+            pharmacy_number = "A", 
+            pharmacy_address = "aa"
         ))
         self.assertEqual(rv.status_code, 200)
 
@@ -89,5 +95,105 @@ class UserTestCase(BaseTestCase):
 
         data = json.loads(rv.data)
         self.assertEqual(data["name"], "UserNotFound")
+
+
+    def test_pharmacy_1(self):
+        rv = self.post('/user/register', dict(
+            first_name="Test",
+            last_name="User",
+            email="abc@abc.com",
+            password="123",
+            pharmacy_name = "HEB",
+            pharmacy_number = "123-456-1210",
+            pharmacy_address = "360 Cap. Tex"
+        ))
+
+
+        conn = db.make_conn()
+        cursor = conn.cursor(db.DictCursor)
+
+        count = cursor.execute("""
+            SELECT * FROM users
+            WHERE id = %s
+        """, [1])
+        self.assertGreater(count, 0)
+
+        user = cursor.fetchall()[0]
+        self.assertEqual(user["pharmacy_name"], "HEB")
+
+
+    def test_pharmacy_2(self):
+        rv = self.post('/user/register', dict(
+            first_name="Test",
+            last_name="User",
+            email="abc@abc.com",
+            password="123",
+            pharmacy_name = "HEB",
+            pharmacy_number = "123-456-1210",
+            pharmacy_address = "360 Cap. Tex"
+        ))
+
+
+        conn = db.make_conn()
+        cursor = conn.cursor(db.DictCursor)
+
+        count = cursor.execute("""
+            SELECT * FROM users
+            WHERE id = %s
+        """, [1])
+        self.assertGreater(count, 0)
+
+        user = cursor.fetchall()[0]
+        self.assertEqual(user["pharmacy_phone"], "123-456-1210")
+
+
+    def test_pharmacy_3(self):
+        rv = self.post('/user/register', dict(
+            first_name="Test",
+            last_name="User",
+            email="abc@abc.com",
+            password="123",
+            pharmacy_name = "HEB",
+            pharmacy_number = "123-456-1210",
+            pharmacy_address = "360 Cap. Tex"
+        ))
+
+
+        conn = db.make_conn()
+        cursor = conn.cursor(db.DictCursor)
+
+        count = cursor.execute("""
+            SELECT * FROM users
+            WHERE id = %s
+        """, [1])
+        self.assertGreater(count, 0)
+
+        user = cursor.fetchall()[0]
+        self.assertEqual(user["pharmacy_address"], "360 Cap. Tex")
+
+
+    def test_pharmacy_4(self):
+        rv = self.post('/user/register', dict(
+            first_name="Test",
+            last_name="User",
+            email="abc@abc.com",
+            password="123",
+            pharmacy_name = "HEB",
+            pharmacy_number = "123-456-1210",
+            pharmacy_address = "360 Cap. Tex Highway"
+        ))
+
+
+        conn = db.make_conn()
+        cursor = conn.cursor(db.DictCursor)
+
+        count = cursor.execute("""
+            SELECT * FROM users
+            WHERE id = %s
+        """, [1])
+        self.assertGreater(count, 0)
+
+        user = cursor.fetchall()[0]
+        self.assertEqual(user["pharmacy_address"], "360 Cap. Tex Highway")
     
         

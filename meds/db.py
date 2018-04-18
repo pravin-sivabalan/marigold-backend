@@ -53,8 +53,8 @@ class InvalidNotification(Error):
         self.notification = notification
 
 add_cmd = """
-    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id, banned)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+    INSERT INTO user_meds (user_id, rxcui, name, quantity, run_out_date, temporary, medication_id, banned, possible_side_effects)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 select_cmd = """
@@ -149,10 +149,11 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     run_out_date = calc_run_out_date(quantity_parsed, notifications, start=dt.datetime.now())
 
     medication_id = meds.fda.get_rx(cui)
+    side_effects = get_drug_side_effects(cui)
 
     leagues_banned_in = get_leagues_banned_in(name)
 
-    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id, leagues_banned_in])
+    cursor.execute(add_cmd, [auth.uid(), cui, name, quantity_parsed, run_out_date.strftime('%Y-%m-%d %H:%M:%S'), temporary_parsed, medication_id, leagues_banned_in, side_effects])
 
     cursor.execute("SELECT LAST_INSERT_ID();")
     get_id = cursor.fetchall()
@@ -171,7 +172,7 @@ def add(name, cui, quantity, notifications, temporary, alert_user):
     return get_id[0][0]
 
 for_user_cmd = """
-    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary, banned FROM user_meds
+    SELECT id, medication_id, rxcui, name, quantity, run_out_date, temporary, banned, possible_side_effects FROM user_meds
     WHERE user_id = %s
 """
 
@@ -179,6 +180,16 @@ get_med_cmd = """
     SELECT * from meds
     WHERE id = %s
 """
+
+get_side_effects_command = """ SELECT possible_side_effects FROM meds WHERE rxcui = %s """
+
+def get_drug_side_effects(rxcui):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(get_side_effects_command, [rxcui])
+    side_effects_return = cursor.fetchall()
+    return side_effects_return[0][0]
 
 def for_user():
     conn = db.conn()

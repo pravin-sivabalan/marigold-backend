@@ -110,16 +110,16 @@ for row in data :
 
 
 
-    now_time = datetime.datetime.now() - datetime.timedelta(minutes = 60)
-    upper_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 57.6) 
-    lower_bound_time = datetime.datetime.now () - datetime.timedelta(minutes = 62.4)
+    now_time = datetime.datetime.now() + datetime.timedelta(minutes = 60)
+    upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 57.6) 
+    lower_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4)
 
 
-    if(day == datetime.datetime.today().weekday() and time_to_take.time() > lower_bound_time.time() and time_to_take.time() < upper_bound_time.time()):
+    if(day == datetime.datetime.today().weekday() and time_to_take.time() < lower_bound_time.time() and time_to_take.time() > upper_bound_time.time()):
         mail(email, med_name, user_name)
         print("good")
     else:
-        print(day, time_to_take.time(), lower_bound_time.time(), upper_bound_time.time())
+        print("bad", day, datetime.datetime.today().weekday(), lower_bound_time.time(), now_time.time(), upper_bound_time.time())
 
 
 
