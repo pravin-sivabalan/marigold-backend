@@ -218,8 +218,6 @@ update_password_sql = """
 """
 
 def update_password(id, password):
-
-
     print(id)
     print(password)
 
@@ -230,8 +228,22 @@ def update_password(id, password):
     count = cursor.execute(update_password_sql, [password, id])
     conn.commit()
 
-
     if count == 0:
         raise UserNotFound()
 
     return
+
+side_effects_cmd = """ SELECT name, possible_side_effects FROM marigold.user_meds WHERE user_id = %s """
+
+def get_side_effects(uid):
+    conn = db.conn()
+    cursor = conn.cursor()
+    side_effects = cursor.execute(side_effects_cmd, [uid])
+    side_effects = cursor.fetchall()
+    return side_effects
+
+
+
+
+
+
