@@ -94,7 +94,7 @@ def check_med(med):
                     drug = med_id,
                     allergy = allergy,
                     desc = ingred_msg.format(related_med.name, allergy),
-                    type = "active_ingredient"
+                    type = "Active Ingredient"
                 ))
 
     # Check FDA inactive ingredients
@@ -112,7 +112,7 @@ def check_med(med):
                         drug = med_id,
                         allergy = allergy,
                         desc = inactive_ingred_msg.format(ingred, allergy),
-                        type = "inactive_ingredient"
+                        type = "Inactive Ingredient"
                     ))
 
     # Check for allergies in warning label
@@ -129,7 +129,7 @@ def check_med(med):
                     drug = med_id,
                     allergy = allergy, 
                     desc = warning_label_msg.format(med["name"], allergy),
-                    type = "warning_label"
+                    type = "Warning Label"
                 ))
     
     return conflicts
