@@ -19,6 +19,7 @@ from botocore.exceptions import ClientError
 from error import Error, response_for_error
 
 app = Flask(__name__)
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 app.register_blueprint(update.routes.blueprint, url_prefix='/update')
