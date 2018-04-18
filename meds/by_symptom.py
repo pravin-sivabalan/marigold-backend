@@ -21,7 +21,21 @@ def clean_drug(drug):
     # Improve name if possible
     match = re.search(r'\[(.+)\]', drug["name"])
     if match is not None:
+        old_name = drug["name"].lower()
         drug["name"] = match.group(1)
+    
+        if "disintegrating" in old_name:
+            drug["name"] += " Disintegrating"
+
+        if "extended" in old_name and "release" in old_name:
+            drug["name"] += " Extended Release"
+
+        if "capsule" in old_name:
+            drug["name"] += " Capsule"
+        elif "tablet" in old_name:
+            drug["name"] += " Tablet"
+        elif "suspension" in old_name:
+            drug["name"] += " Suspension"
 
     """
     loc = drug.lower().find("oral")
