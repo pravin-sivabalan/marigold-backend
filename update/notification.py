@@ -174,7 +174,7 @@ cursor.execute(refill_notification)
 conn.commit()
 
 data = cursor.fetchall()
-"""
+
 for row in data:
     user_id = row[1]
     name = row[3]
@@ -187,11 +187,12 @@ for row in data:
     upper_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 57.6) 
     lower_bound_time = datetime.datetime.now () + datetime.timedelta(minutes = 62.4)
 
-    if run_out_date.weekday() == datetime.datetime.today().weekday() and run_out_date.time() < lower_bound_time.time() and time_to_take.time() > upper_bound_time.time():
+    if run_out_date.weekday() == datetime.datetime.today().weekday() and run_out_date.time() < lower_bound_time.time() and run_out_date.time() > upper_bound_time.time():
         mail_reminder(email, name, user_name)
+        print("mail")
     else:
-        print(run_out_date, now_time, run_out_date.weekday(), datetime.datetime.today().weekday())
-"""
+        print(upper_bound_time.time(), run_out_date.time(), lower_bound_time.time())
+
 
 
 
