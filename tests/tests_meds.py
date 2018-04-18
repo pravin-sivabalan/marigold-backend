@@ -105,6 +105,7 @@ class MedsTestCase(BaseTestCase):
             ],
             temporary = True,
             alert_user = False,
+            refill = True,
         )
        
         rv = self.get_meds()

@@ -22,6 +22,7 @@ import meds.allergy
 import requests as req
 import collections as col
 
+import rx.norm as rxn
 import rx.relation as rxrel
 
 blueprint = Blueprint("meds", __name__)
@@ -88,7 +89,8 @@ def for_user():
 @auth.required
 def conflicts():
     return jsonify(message="ok", 
-        conflicts=meds.conflict.check())
+        conflicts=meds.conflict.check(),
+        allergy_conflicts=meds.allergy.check_all())
 
 @blueprint.route('/conflicts-with/<cui>/<name>', methods = ['GET'])
 @auth.required
@@ -97,6 +99,23 @@ def conflicts_with(cui, name):
         conflicts=meds.conflict.check_with(cui),
         allergy_conflicts=meds.allergy.check_with(cui),
         leagues = meds.db.get_leagues_banned_in(name))
+
+@blueprint.route('/details/<cui>', methods = ['GET'])
+def details(cui):
+    classes, _ = rxrel.classes_for(cui)
+    props = rxn.props(cui)
+
+    results = dict(classes=[], props=props)
+
+    for class_ in classes:
+        results["classes"].append(dict(
+            name = class_.name,
+            id = class_.id,
+            type = class_.typ,
+            relation = class_.relation
+        ))
+
+    return jsonify(message="ok", details=results)
 
 @blueprint.route('/refill', methods = ['POST'])
 @auth.required
@@ -123,7 +142,6 @@ def delete():
 
     meds.db.delete(med_id)
     return jsonify(message="ok")
-
 
 
 @blueprint.route('/pic', methods = ['POST'])

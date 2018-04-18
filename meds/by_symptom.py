@@ -11,20 +11,40 @@ import os.path
 import cache
 
 def is_valid_drug(drug):
-    name = drug.lower()
+    name = drug["name"].lower()
+    if name.count('/') > 0:
+        return False
+
     return ("pill" in name or "oral" in name) and "powder" not in name
 
 def clean_drug(drug):
     # Improve name if possible
-    match = re.search(r'\[(.+)\]', drug)
+    match = re.search(r'\[(.+)\]', drug["name"])
     if match is not None:
-        drug = match.group(1)
+        old_name = drug["name"].lower()
+        drug["name"] = match.group(1)
+    
+        if "disintegrating" in old_name:
+            drug["name"] += " Disintegrating"
 
+        if "extended" in old_name and "release" in old_name:
+            drug["name"] += " Extended Release"
+
+        if "capsule" in old_name:
+            drug["name"] += " Capsule"
+        elif "tablet" in old_name:
+            drug["name"] += " Tablet"
+        elif "suspension" in old_name:
+            drug["name"] += " Suspension"
+
+    """
     loc = drug.lower().find("oral")
     if loc != -1:
         drug = drug[:loc]
+    """
 
-    return drug.title()
+    drug["name"] = drug["name"].title()
+    return drug
 
 def perform(cid, rel="may_treat", limit=25):
     ingredients = rxrel.cuis_with_class(cid, rel, types=["IN"])[:limit]
@@ -32,14 +52,17 @@ def perform(cid, rel="may_treat", limit=25):
     drugs = []
     for ing in ingredients:
         for drug in rxn.related_by_types(ing.cui, ["SCDF", "SBDF"]):
-            drugs.append(drug.name)
+            drugs.append(dict(
+                name = drug.name,
+                cui = drug.cui,
+                tty = drug.tty
+            ))
 
     # Clean up redundancy, improve naming
     drugs = [clean_drug(drug) for drug in drugs if is_valid_drug(drug)]
 
     # Filter out identical drugs
-    drugs = list(set(drugs))
-    drugs.sort()
+    drugs.sort(key=lambda drug: drug["name"])
 
     return drugs
 
