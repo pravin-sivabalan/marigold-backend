@@ -7,6 +7,7 @@ from error import Error
 import requests as req
 
 import re
+import time
 import collections as col
 
 id_field = 0
@@ -276,15 +277,26 @@ def side_effects(uid, limit=25):
         resp.raise_for_status()
 
         data = resp.json()
-        results = data["results"]
+        results = data.get("results")
+
+        if results is None:
+            continue
 
         for result in results:
-            patient = result["patient"]
-            reactions = patient["reaction"]
+            patient = result.get("patient")
+            if patient is None:
+                continue
+
+            reactions = patient.get("reaction")
+            if reactions is None:
+                continue
 
             for reaction in reactions:
-                name = reaction["reactionmeddrapt"]
-                side_effect_counts[name] += 1
+                name = reaction.get("reactionmeddrapt")
+                if name is not None:
+                    side_effect_counts[name] += 1
+
+        time.sleep(0.15)
 
     counts = [dict(name=name.title(), count=count) for name, count in side_effect_counts.items()]
     counts.sort(key=lambda entry: entry["count"], reverse=True)
