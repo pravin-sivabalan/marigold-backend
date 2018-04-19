@@ -1,5 +1,5 @@
 from flask import session
-from tests import BaseTestCase
+from tests import BaseTestCase, rand_str
 import time, datetime
 from dateutil import parser
 import json
@@ -578,6 +578,50 @@ class MedsTestCase(BaseTestCase):
         meds = json.dumps(meds)
 
         self.assertIn("nfl,nba,ncaa", meds)
+
+    def test_allergies_1(self):
+        rv = self.post('/user/register', data=dict(
+            first_name=rand_str(10),
+            last_name=rand_str(10),
+            email = "{}@{}.com".format(rand_str(5), rand_str(5)),
+            password = "{}@{}.com".format(rand_str(5), rand_str(5)),
+            allergies = "ibuprofen"
+        ))
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.jwt = data["jwt"]
+
+        rv = self.autoadd_med("Advil")
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        conflicts = data["allergy_conflicts"]
+
+        self.assertEqual(len(conflicts), 2)
+        for conflict in conflicts:
+            self.assertEqual(conflict["allergy"], "ibuprofen")
+
+    def test_allergies_2(self):
+        rv = self.post('/user/register', data=dict(
+            first_name=rand_str(10),
+            last_name=rand_str(10),
+            email = "{}@{}.com".format(rand_str(5), rand_str(5)),
+            password = "{}@{}.com".format(rand_str(5), rand_str(5)),
+            allergies = "LOL"
+        ))
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        self.jwt = data["jwt"]
+
+        rv = self.autoadd_med("Advil")
+        self.assertEqual(rv.status_code, 200)
+        data = json.loads(rv.data)
+
+        conflicts = data["allergy_conflicts"]
+
+        self.assertEqual(len(conflicts), 0)
 
     def test_side_effects_1(self):
         with open("tests/effects1.txt", "r") as file:
