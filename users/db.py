@@ -244,7 +244,7 @@ def get_side_effects(uid):
 
 web_meds = """ SELECT name, id FROM marigold.user_meds WHERE user_id = %s """
 
-def get_web_meds(uid):
+def get_meds(uid):
     conn = db.conn()
     cursor = conn.cursor()
     cursor.execute(web_meds, [uid])
