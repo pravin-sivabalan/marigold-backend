@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, send_file, send_from_directory, redirect, url_for, session
+from flask_session import Session
+
 
 import click
 
@@ -26,7 +28,9 @@ app.register_blueprint(users.routes.blueprint, url_prefix='/user')
 app.register_blueprint(meds.routes.blueprint, url_prefix='/meds')
 app.register_blueprint(update.routes.blueprint, url_prefix='/update')
 app.register_blueprint(notification.routes.blueprint, url_prefix='/notification')
+app.config["SESSION_TYPE"] = "filesystem"
 
+Session(app)
 
 @app.errorhandler(Error)
 def handle_error(error):
