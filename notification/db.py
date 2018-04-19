@@ -92,6 +92,9 @@ def cal(user_id):
         row = {}
         row['medication_id'] = x[2]
         row['day_to_take'] = x[3]
+
+        #print(row['day_to_take'].time())
+
         row['time_to_take'] = x[4]
         row['run_out_date'] = x[5]
 
