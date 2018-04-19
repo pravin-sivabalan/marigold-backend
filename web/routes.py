@@ -52,9 +52,7 @@ def login_submit():
 		username = request.args.get('email')
 		password = request.args.get('password')
 
-		if username != " " and password != " ":
-			return render_template('index.html')
-
+	app.logger.error('An error occurred')
 	try:
 		out = users.db.check_creds(email, password)
 		session['login'] = out
