@@ -260,6 +260,8 @@ def refill(med_id):
 
     conn.commit()
 
+    return run_out_date
+
 class MedIdNotFound(Error):
     """Given medicine ID was not in the database"""
     status_code = 400

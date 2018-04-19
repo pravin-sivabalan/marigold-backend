@@ -127,8 +127,8 @@ def refill():
     except KeyError as err:
         raise MissingDataError(err)
 
-    meds.db.refill(med_id)
-    return jsonify(message="ok")
+    run_out_date = meds.db.refill(med_id)
+    return jsonify(message="ok", run_out_date=run_out_date)
 
 @blueprint.route('/delete', methods = ['POST'])
 @auth.required
