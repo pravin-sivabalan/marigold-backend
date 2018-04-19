@@ -28,6 +28,7 @@ class NoPasswordGiven(CredError):
     status_code = 400
     error_code = 22
 
+
 find_users_with_email = """
     SELECT * FROM users
     WHERE email = %s
@@ -42,14 +43,12 @@ def check_creds(user, passwd):
 
     found = cursor.execute(find_users_with_email, [user])
     if found == 0:
-        print("Could not find|" + user + "|" )
         raise UserNotFound()
 
     user = cursor.fetchall()[0]
 
     hashed_passwd = auth.calc_hash(passwd)
     if user[passwd_field] != hashed_passwd:
-        print("Incalid Pass|" + password + "|" )
         raise InvalidPassword()
 
     return user[id_field]

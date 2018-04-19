@@ -122,7 +122,6 @@ def get_leagues_banned_in(name):
     for l in leagues:
         league_banned += l[0] + ','
 
-    print(league_banned, "hello", name.split(' ',1)[0])
 
     return league_banned[:-1]
 
@@ -295,6 +294,17 @@ def check_leagues(cui, name):
         banned_cmd = """SELECT league FROM banned WHERE name like  %s"""
         cursor.execute(banned_cmd, [name.split(' ',1)[0]])
         return cursor.fetchall()
+
+
+get_detailed_med_cmd = """ SELECT * FROM marigold.user_meds WHERE id = %s """
+
+def get_detailed_med(id):
+    conn = db.conn()
+    cursor = conn.cursor()
+    cursor.execute(get_detailed_med_cmd, [id])
+    info = cursor.fetchall()
+
+    return info
 
 
 

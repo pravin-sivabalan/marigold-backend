@@ -121,7 +121,7 @@ def dashboard():
 def detailed(med_id):
 	if 'login' in session:
 		user_id = session['login']
-		return render_template('detailed.html', med_id=med_id)
+		return render_template('detailed.html', med_id=med_id, user_id=user_id, med_info=meds.db.get_detailed_med(med_id))
 	else:
 		return redirect(url_for('web.index'))
 
@@ -139,7 +139,7 @@ def account(id):
 
             return render_template('account_detailed.html', user_id=user_id, user=user, 
                 allergies = listify(user["allergies"]),
-                leagues = listify(user["league"]))
+                leagues = listify(user["league"]), user_id = user_id)
     else:
             return redirect(url_for('web.index'))
 
