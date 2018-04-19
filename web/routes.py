@@ -51,6 +51,8 @@ def login_submit():
 	elif request.method == 'GET':
 		username = request.args.get('email')
 		password = request.args.get('password')
+		return render_template('register-form.html')
+
 
 	app.logger.error('An error occurred')
 	try:
