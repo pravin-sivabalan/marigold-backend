@@ -252,9 +252,28 @@ def get_web_meds(uid):
     meds = cursor.fetchall()
     return meds
 
+def side_effects(uid):
+    conn = db.conn()
+    cursor = conn.cursor(db.DictCursor)
 
+    cursor.execute(side_effects_cmd, [uid])
+    meds = cursor.fetchall()
 
+    for med in meds:
+        print("MED: {}".format(med["name"]))
+        
+        side_effects = med["possible_side_effects"]
+        sentences = side_effects.lower().split(". ")
 
+        for sentence in sentences:
+            sentence = sentence.strip()
+
+            if sentence.startswith("do"):
+                continue
+            elif "allergy" in sentence:
+                continue
+    
+            print("SENT: {}".format(sentence))
 
 
 
