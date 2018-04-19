@@ -4,6 +4,11 @@ import auth
 
 from error import Error
 
+import requests as req
+
+import re
+import collections as col
+
 id_field = 0
 first_field = 1
 last_field = 2
@@ -251,28 +256,37 @@ def get_meds(uid):
     meds = cursor.fetchall()
     return meds
 
-def side_effects(uid):
+fda_route = "https://api.fda.gov/drug/event.json"
+
+def side_effects(uid, limit=25):
     conn = db.conn()
     cursor = conn.cursor(db.DictCursor)
 
-    cursor.execute(side_effects_cmd, [uid])
+    cursor.execute("""
+        SELECT * FROM user_meds
+        WHERE user_id = %s
+    """, [uid])
     meds = cursor.fetchall()
 
+    side_effect_counts = col.defaultdict(lambda: 0)
+
     for med in meds:
-        print("MED: {}".format(med["name"]))
-        
-        side_effects = med["possible_side_effects"]
-        sentences = side_effects.lower().split(". ")
+        cui = med["rxcui"]
+        resp = req.get(fda_route, params=dict(search="rxcui:{}".format(cui), limit=100))
+        resp.raise_for_status()
 
-        for sentence in sentences:
-            sentence = sentence.strip()
+        data = resp.json()
+        results = data["results"]
 
-            if sentence.startswith("do"):
-                continue
-            elif "allergy" in sentence:
-                continue
-    
-            print("SENT: {}".format(sentence))
+        for result in results:
+            patient = result["patient"]
+            reactions = patient["reaction"]
 
+            for reaction in reactions:
+                name = reaction["reactionmeddrapt"]
+                side_effect_counts[name] += 1
 
+    counts = [dict(name=name.title(), count=count) for name, count in side_effect_counts.items()]
+    counts.sort(key=lambda entry: entry["count"], reverse=True)
 
+    return counts[:limit]

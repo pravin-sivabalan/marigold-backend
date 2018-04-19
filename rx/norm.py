@@ -7,6 +7,8 @@ import collections as col
 
 from error import Error
 
+import requests as req
+
 class MultipleIdsError(Error):
     """Multiple RxCuis exist for a given NDC"""
 

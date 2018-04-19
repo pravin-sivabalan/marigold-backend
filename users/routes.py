@@ -88,3 +88,8 @@ def get_side_effects():
     side_effects = users.db.get_side_effects(auth.uid())
 
     return jsonify(side_effects=side_effects)
+
+@blueprint.route('/side_effects', methods = ['GET'])
+@auth.required
+def side_effects():
+    return jsonify(message="ok", side_effects=users.db.side_effects(uid=auth.uid()))
