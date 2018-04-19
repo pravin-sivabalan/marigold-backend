@@ -92,12 +92,17 @@ def cal(user_id):
         row = {}
         row['medication_id'] = x[2]
         row['day_to_take'] = x[3]
-
-        #print(row['day_to_take'].time())
-
         row['time_to_take'] = x[4]
         row['run_out_date'] = x[5]
 
+        if row['time_to_take'].hour >= 0 and row['time_to_take'].hour <=5:
+            row['time_to_take'] = row['time_to_take'] - datetime.timedelta(hours = 5)
+            if row['day_to_take'] == 0:
+                row['day_to_take'] = 6
+            else:
+                row['day_to_take'] -= 1
+
+        row['time_to_take'] =  row['time_to_take'] + datetime.timedelta(hours = 5)
         now_time = datetime.datetime.now() 
         number = datetime.datetime.today().weekday()
 
