@@ -52,9 +52,7 @@ def login_submit():
 		username = request.args.get('email')
 		password = request.args.get('password')
 
-		if username != " " and password != " ":
-			return render_template('index.html')
-
+	app.logger.error('An error occurred')
 	try:
 		out = users.db.check_creds(email, password)
 		session['login'] = out
@@ -121,7 +119,7 @@ def dashboard():
 def detailed(med_id):
 	if 'login' in session:
 		user_id = session['login']
-		return render_template('detailed.html', med_id=med_id)
+		return render_template('detailed.html', med_id=med_id, user_id=user_id, med_info=meds.db.get_detailed_med(med_id))
 	else:
 		return redirect(url_for('web.index'))
 

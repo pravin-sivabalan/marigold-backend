@@ -1,4 +1,4 @@
-from flask import request, jsonify, Blueprint, render_template, request
+from flask import request, jsonify, Blueprint, render_template, request, redirect
 
 import auth
 import auth.token

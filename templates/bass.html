@@ -30,17 +30,17 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/web/"><img src="https://s3.amazonaws.com/marigoldapp/MariGoldLogo.png" id="logo"></a>
+        <a class="navbar-brand" href="/"><img src="https://s3.amazonaws.com/marigoldapp/MariGoldLogo.png" id="logo"></a>
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav navbar-right">
           {% if user_id %}
-            <li><a href="/web/account/{{ user_id }}">Account</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/account/{{ user_id }}">Account</a></li>
           {% else %}
-            <li><a href="/web/login">Sign in</a></li>
-            <li><a href="/web/register">Sign up</a></li>
+            <li><a href="/login">Sign in</a></li>
+            <li><a href="/register">Sign up</a></li>
           {% endif %}
-          <li><a href="/web/about">About</a></li>
         </ul>
       </div>
     </div>
