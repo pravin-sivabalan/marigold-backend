@@ -39,6 +39,15 @@ def update_profile():
     if(data.get('allergies')):
         update.db.update_allergies(data.get('allergies'), user_id)
 
+    if(data.get('pharmacy_name')):
+        update.db.update_pharmacy_name(data.get('pharmacy_name'), user_id)
+
+    if(data.get('pharmacy_address')):
+        update.db.update_pharmacy_address(data.get('pharmacy_address'), user_id)
+
+    if(data.get('pharmacy_number')):
+        update.db.update_pharmacy_phone(data.get('pharmacy_number'), user_id)
+
 
     return jsonify(message="ok")
 
