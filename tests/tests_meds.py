@@ -1,4 +1,4 @@
-
+from flask import session
 from tests import BaseTestCase
 import time, datetime
 from dateutil import parser
@@ -144,16 +144,31 @@ class MedsTestCase(BaseTestCase):
         med = data["meds"][0]
         self.assertEqual(med["temporary"], 0)
 
-    def test_no_conflicts(self):
+    def test_no_conflicts_1(self):
         self.autoadd_med("Ibuprofen")
         rv = self.autoadd_med("Zyrtec")
 
         data = json.loads(rv.data)
         self.assertEqual(len(data["conflicts"]), 0)
 
-    def test_conflicts(self):
+
+    def test_no_conflicts_2(self):
+        self.autoadd_med("Ibuprofen")
+        rv = self.autoadd_med("Adderall")
+
+        data = json.loads(rv.data)
+        self.assertEqual(len(data["conflicts"]), 0)
+
+    def test_conflicts_1(self):
         self.autoadd_med("Digoxin")
         rv = self.autoadd_med("Quinidine")
+
+        data = json.loads(rv.data)
+        self.assertEqual(len(data["conflicts"]), 1)
+
+    def test_conflicts_2(self):
+        self.autoadd_med("Advil")
+        rv = self.autoadd_med("Timolol")
 
         data = json.loads(rv.data)
         self.assertEqual(len(data["conflicts"]), 1)
@@ -238,7 +253,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 12) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 11) 
 
 
         run_out = parser.parse(run_out_date)
@@ -260,7 +275,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 87) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 86) 
 
 
         run_out = parser.parse(run_out_date)
@@ -282,7 +297,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 16) 
 
 
         run_out = parser.parse(run_out_date)
@@ -301,7 +316,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 34) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 33) 
 
 
         run_out = parser.parse(run_out_date)
@@ -324,7 +339,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 10) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 9) 
 
 
         run_out = parser.parse(run_out_date)
@@ -366,7 +381,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 17) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 16) 
 
 
         run_out = parser.parse(run_out_date)
@@ -387,7 +402,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 39) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 38) 
 
 
         run_out = parser.parse(run_out_date)
@@ -412,7 +427,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 28) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 27) 
 
 
         run_out = parser.parse(run_out_date)
@@ -432,7 +447,7 @@ class MedsTestCase(BaseTestCase):
         rv = self.get_meds()
         data = json.loads(rv.data)
         run_out_date = data['meds'][0]['run_out_date']
-        check_time = datetime.datetime.now() + datetime.timedelta(days = 21) 
+        check_time = datetime.datetime.now() + datetime.timedelta(days = 20) 
 
 
         run_out = parser.parse(run_out_date)
@@ -479,7 +494,7 @@ class MedsTestCase(BaseTestCase):
         data = json.loads(rv.data)
 
         drugs = data["drugs"]
-        self.assertIn("Advil", drugs)
+        self.assertIn("Advil", str(drugs))
 
     def test_pic_lookup_1(self):
         with open("tests/1.txt", "r") as file:
@@ -606,4 +621,41 @@ class MedsTestCase(BaseTestCase):
             fileR = file.read()
 
             self.assertIn(meds[:100], fileR)
+
+
+    def test_web_account_1(self):
+        rv = self.app.get('/web/account/65')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_account_2(self):
+        rv = self.app.get('/web/account')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_web_account_3(self):
+        rv = self.app.get('/web/account/1')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_medication_1(self):
+        rv = self.app.get('/web/dashboard')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_medication_2(self):
+        rv = self.app.get('/web/detailed/567')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_medication_3(self):
+        rv = self.app.get('/web/dashboard/56')
+        self.assertEqual(rv.status_code, 404)
+
+    def test_web_detailed_medication_1(self):
+        rv = self.app.get('/web/dashboard')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_detailed_medication_2(self):
+        rv = self.app.get('/web/detailed/567')
+        self.assertEqual(rv.status_code, 302)
+
+    def test_web_detailed_medication_3(self):
+        rv = self.app.get('/web/detailed/')
+        self.assertEqual(rv.status_code, 404)
 
