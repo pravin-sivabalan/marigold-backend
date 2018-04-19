@@ -122,5 +122,31 @@ def update_med_temporary(temp, id):
     conn.commit()
 
 
+update_p_name_cmd = """ UPDATE users SET pharmacy_name = %s WHERE id = %s """
+
+def update_pharmacy_name(name, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_p_name_cmd, [name, id])
+    conn.commit()
+
+update_p_address_cmd = """ UPDATE users SET pharmacy_address = %s WHERE id = %s """
+
+def update_pharmacy_address(name, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_p_address_cmd, [name, id])
+    conn.commit()
+
+update_p_phone_cmd = """ UPDATE users SET pharmacy_phone = %s WHERE id = %s """
+
+def update_pharmacy_phone(name, id):
+    conn = db.conn()
+    cursor = conn.cursor()
+
+    cursor.execute(update_p_phone_cmd, [name, id])
+    conn.commit()
 
 
