@@ -201,19 +201,19 @@ class UserTestCase(BaseTestCase):
 
 
     def test_web_login_1(self):
-        rv = self.app.get('/web/login/submit?email=wborland@purdue.edu&password=password')
+        rv = self.app.get('/login/submit?email=wborland@purdue.edu&password=password')
         self.assertEqual(rv.status_code, 200)
 
     def test_web_login_2(self):
-        rv = self.app.get('/web/login/submit?email=abc@abc.com&password=abc')
+        rv = self.app.get('/login/submit?email=abc@abc.com&password=abc')
         self.assertEqual(rv.status_code, 200)
 
     def test_web_register_1(self):
-        rv = self.app.get('/web/register/submit?email=abc@abc.com&password=abc&cpassword=password')
+        rv = self.app.get('/register/submit?email=abc@abc.com&password=abc&cpassword=password')
         self.assertNotEqual(rv.status_code, 200)
 
     def test_web_register_2(self):
-        rv = self.app.get('/web/login/submit?email=wborland@purdue.edu&password=password&cpassword=password')
+        rv = self.app.get('/login/submit?email=wborland@purdue.edu&password=password&cpassword=password')
         self.assertEqual(rv.status_code, 200)
         
     
