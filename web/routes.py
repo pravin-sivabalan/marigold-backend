@@ -139,7 +139,7 @@ def account(id):
 
             return render_template('account_detailed.html', user_id=user_id, user=user, 
                 allergies = listify(user["allergies"]),
-                leagues = listify(user["league"]), user_id = user_id)
+                leagues = listify(user["league"]))
     else:
             return redirect(url_for('web.index'))
 
