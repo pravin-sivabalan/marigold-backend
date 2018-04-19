@@ -155,7 +155,7 @@ def picture():
     picture_data = data["photo"]
     image_data = bytes(picture_data, encoding="ascii")
     file_name_o = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(10)]) + ".png"
-    file_name = "/home/ubuntu/flaskapp/static/img/" + file_name_o
+    file_name = "/var/www/html/flaskapp/static/img/" + file_name_o
 
     with open(file_name,"wb") as f:
         f.write(decodestring(image_data))
