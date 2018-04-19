@@ -149,6 +149,10 @@ footer{
     background: #e7e7e7;
 }
 
+.card-body p, .card-body a {
+    font-size: 1.1em;
+}
+
 .card-list p {
     text-align: left;
     font-size: 1.15em;

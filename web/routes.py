@@ -137,7 +137,7 @@ def account(id):
             user_id = session['login']
             user = users.db.find_user(user_id)
 
-            return render_template('account_detailed.html', user=user, 
+            return render_template('account_detailed.html', user_id=user_id, user=user, 
                 allergies = listify(user["allergies"]),
                 leagues = listify(user["league"]), user_id = user_id)
     else:
